@@ -7,7 +7,10 @@ requires-python = ">=3.12,<3.13"
 authors = [
     { name = "Krishna Sai Joga" }
 ]
-dependencies = []
+dependencies = [
+    "pydantic>=2.13.5",
+    "python-dotenv>=1.2.3",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -20,3 +23,9 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.7",
+]

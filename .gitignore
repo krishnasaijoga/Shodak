@@ -30,3 +30,6 @@ Thumbs.db
 data/raw/
 outputs/
 logs/
+
+# Miscellaneous
+learning.txt
