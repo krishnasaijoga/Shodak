@@ -2,6 +2,7 @@
 
 from shodak.config import settings
 
+
 def test_default_app_name():
     assert settings.app_name == "shodak"
 
