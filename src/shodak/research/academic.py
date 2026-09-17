@@ -1,11 +1,12 @@
 import httpx
 
-from shodak.models.source import Source, SourceType
+from shodak.models.source import Source, SourceProvider, SourceType
 from shodak.research.exceptions import (
     ResearchConnectionError,
     ResearchProviderError,
     ResearchRateLimitError,
 )
+from shodak.research.normalizer import normalize_source
 
 SEMANTIC_SCHOLAR_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 CROSSREF_URL = "https://api.crossref.org/works"
@@ -47,9 +48,10 @@ def search_semantic_scholar(query:str, limit:int=5)->list[Source]:
             abstract=paper.get("abstract"),
             doi=external_ids.get("DOI"),
             venue=paper.get("venue"),
-            citation_count=paper.get("citationCount")
+            citation_count=paper.get("citationCount"),
+            provider=SourceProvider.semantic_scholar
         )
-        sources.append(source)
+        sources.append(normalize_source(source))
     return sources
 
 
@@ -108,14 +110,17 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
             publication_year=date_parts[0][0]
 
         sources.append(
-            Source(
-                title="titles[0]",
-                url=f"https://doi.org/{doi}",
-                source_type=SourceType.academic,
-                authors=authors,
-                publication_year=publication_year,
-                doi=doi,
-                venue=(item.get("container-title") or [None])[0]
+            normalize_source(
+                Source(
+                    title="titles[0]",
+                    url=f"https://doi.org/{doi}",
+                    source_type=SourceType.academic,
+                    authors=authors,
+                    publication_year=publication_year,
+                    doi=doi,
+                    venue=(item.get("container-title") or [None])[0],
+                    provider=SourceProvider.crossref
+                )
             )
         )
     return sources

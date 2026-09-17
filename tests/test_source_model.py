@@ -1,4 +1,4 @@
-from shodak.models.source import Source, SourceType
+from shodak.models.source import Source, SourceProvider, SourceType
 
 
 def test_valid_academic_source():
@@ -7,7 +7,9 @@ def test_valid_academic_source():
         url="https://arxiv.org/abs/1706.03762",
         source_type=SourceType.academic,
         authors=["Asish Vaswani"],
-        publication_year=2017
+        publication_year=2017,
+        provider=SourceProvider.semantic_scholar
     )
     assert source.source_type==SourceType.academic
     assert source.publication_year==2017
+    assert source.provider == SourceProvider.semantic_scholar
