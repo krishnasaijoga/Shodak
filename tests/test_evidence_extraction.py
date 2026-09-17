@@ -18,7 +18,8 @@ def test_extract_evidence_from_abstract():
     )
     evidence=extract_evidence_from_source(source)
     assert len(evidence)>0
-    assert evidence[0].source_title=="Example Paper"
+    assert evidence[0].citation.source_title=="Example Paper"
+    assert str(evidence[0].citation.source_url) == "https://example.com/paper"
 
 
 

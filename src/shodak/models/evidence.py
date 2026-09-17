@@ -1,10 +1,10 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
+
+from shodak.models.citation import Citation
 
 
 class Evidence(BaseModel):
     claim:str
     supporting_text:str
-    source_title:str
-    source_url:HttpUrl
-    doi:str|None=None
+    citation:Citation
     confidence:float

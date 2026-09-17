@@ -13,7 +13,7 @@ def test_build_research_report():
             url="https://example.com/paper",
             source_type=SourceType.academic,
             provider=SourceProvider.semantic_scholar,
-            authors=["Jane Doe"],
+            authors=["Joga Krishna"],
             publication_year=2025,
             abstract=(
                 "Retrieval augmented generation can improve access to external knowledge. "
