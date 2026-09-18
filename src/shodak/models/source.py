@@ -1,3 +1,4 @@
+from datetime import date
 from enum import Enum
 
 from pydantic import BaseModel, HttpUrl
@@ -31,6 +32,7 @@ class Source(BaseModel):
     provider:SourceProvider
     authors:list[str]=[]
     publication_year:int|None=None
+    publication_date:date|None=None
     abstract:str|None=None
     doi:str|None=None
     venue:str|None=None
