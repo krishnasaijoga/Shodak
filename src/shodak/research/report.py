@@ -5,6 +5,7 @@ from shodak.research.deduplicator import deduplicate_sources
 from shodak.research.evidence import extract_evidence_from_source
 from shodak.research.evidence_deduplicator import deduplicate_evidence
 from shodak.research.planner import build_research_questions
+from shodak.research.quality import evaluate_research_quality
 from shodak.research.ranker import rank_sources
 
 
@@ -20,9 +21,11 @@ def build_research_report(request:ResearchRequest)->ResearchReport:
     for source in ranked_sources:
         evidence.extend(extract_evidence_from_source(source))
     evidence=deduplicate_evidence(evidence)
+    quality=evaluate_research_quality(ranked_sources,evidence)
     return ResearchReport(
         request=request,
         research_questions=questions,
         sources=ranked_sources,
-        evidence=evidence
+        evidence=evidence,
+        quality=quality
     )

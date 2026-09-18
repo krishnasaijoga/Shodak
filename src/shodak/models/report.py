@@ -5,8 +5,17 @@ from shodak.models.research import ResearchRequest
 from shodak.models.source import Source
 
 
+class ResearchQuality(BaseModel):
+    sufficient_evidence:bool
+    source_count:int
+    evidence_count:int
+    reason:str|None=None
+
+
+
 class ResearchReport(BaseModel):
     request: ResearchRequest
     research_questions:list[str]
     sources:list[Source]
     evidence:list[Evidence]
+    quality:ResearchQuality
