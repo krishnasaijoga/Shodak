@@ -17,6 +17,13 @@ class SourceProvider(str,Enum):
 
 
 
+class PublicationStatus(str,Enum):
+    peer_reviewed="peer_reviewed"
+    preprint="preprint"
+    unknown="unknown"
+
+
+
 class Source(BaseModel):
     title:str
     url:HttpUrl
@@ -30,3 +37,4 @@ class Source(BaseModel):
     citation_count:int|None=None
     has_abstract:bool=False
     metadata_complete:bool=False
+    publication_status: PublicationStatus=PublicationStatus.unknown
