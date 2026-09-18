@@ -1,4 +1,5 @@
 from shodak.models.source import Source
+from shodak.research.doi import normalize_doi
 
 
 def _normalize_title(title:str)->str:
@@ -11,7 +12,7 @@ def deduplicate_sources(sources:list[Source])->list[Source]:
     unique_sources:list[Source]=[]
 
     for source in sources:
-        doi=source.doi.lower().strip() if source.doi else None
+        doi=normalize_doi(source.doi)
         normalized_title=_normalize_title(source.title)
         if doi:
             if doi in seen_dois:
