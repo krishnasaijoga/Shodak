@@ -10,6 +10,7 @@ class ResearchQuality(BaseModel):
     sufficient_evidence:bool
     source_count:int
     evidence_count:int
+    coverage_score:float=0.0
     reason:str|None=None
 
 
