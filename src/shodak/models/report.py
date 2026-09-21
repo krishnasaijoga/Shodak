@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from shodak.models.contradiction import Contradiction
 from shodak.models.evidence import Evidence
 from shodak.models.research import ResearchRequest
 from shodak.models.source import Source
@@ -18,4 +19,5 @@ class ResearchReport(BaseModel):
     research_questions:list[str]
     sources:list[Source]
     evidence:list[Evidence]
+    contradictions:list[Contradiction]=[]
     quality:ResearchQuality
