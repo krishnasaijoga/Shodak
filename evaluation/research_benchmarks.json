@@ -1,0 +1,14 @@
+[
+  {
+    "topic": "retrieval augmented generation",
+    "expected_min_sources": 2,
+    "expected_min_evidence": 2,
+    "expected_min_coverage": 0.2
+  },
+  {
+    "topic": "transformer attention mechanisms",
+    "expected_min_sources": 2,
+    "expected_min_evidence": 2,
+    "expected_min_coverage": 0.2
+  }
+]
