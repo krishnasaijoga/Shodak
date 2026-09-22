@@ -1,3 +1,4 @@
+from shodak.models.citation import Citation
 from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.writing import WritingRequest
@@ -11,7 +12,7 @@ def build_evidence_summary(report:ResearchReport)->str:
     return " ".join(claims)
 
 
-def _collect_citations(report:ResearchReport):
+def _collect_citations(report:ResearchReport)->list[Citation]:
     citations=[]
     for evidence in report.evidence[:3]:
         if evidence not in citations:
