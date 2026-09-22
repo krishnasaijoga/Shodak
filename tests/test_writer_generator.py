@@ -65,3 +65,75 @@ def test_custom_title_is_used():
     )
     draft=generate_draft(report,request)
     assert draft.title=="Why AI agents matter"
+
+
+
+def test_draft_contains_citation():
+    report=ResearchReport(
+        request=ResearchRequest(
+            topic="retrieval augmented generation"
+        ),
+        research_questions=[],
+        sources=[],
+        evidence=[
+            Evidence(
+                claim="Retrieval can improve access to external knowledge.",
+                supporting_text="Supporting evidence.",
+                citation=Citation(
+                    source_title="Example Paper",
+                    source_url="https://example.com/paper",
+                    doi="10.1234/example"
+                ),
+                confidence=0.8
+            )
+        ],
+        contradictions=[],
+        quality=ResearchQuality(
+            sufficient_evidence=True,
+            source_count=2,
+            evidence_count=2,
+            coverage_score=0.5
+        )
+    )
+    request=WritingRequest(
+        output_type=OutputType.blog,
+        include_citation=True
+    )
+    draft=generate_draft(report,request)
+    assert len(draft.sections[0].citations)==1
+    assert draft.sections[0].citations[0].source_title=="Example Paper"
+
+
+
+def test_citations_can_be_disabled():
+    report=ResearchReport(
+        request=ResearchRequest(
+            topic="retrieval augmented generation"
+        ),
+        research_questions=[],
+        sources=[],
+        evidence=[
+            Evidence(
+                claim="Retrieval improves knowledge access.",
+                supporting_text="Supporting evidence.",
+                citation=Citation(
+                    source_title="Example Paper",
+                    source_url="https://example.com/paper"
+                ),
+                confidence=0.7
+            )
+        ],
+        contradictions=[],
+        quality=ResearchQuality(
+            sufficient_evidence=True,
+            source_count=2,
+            evidence_count=2,
+            coverage_score=0.5
+        )
+    )
+    request=WritingRequest(
+        output_type=OutputType.linkedin,
+        include_citation=False
+    )
+    draft=generate_draft(report,request)
+    assert draft.sections[0].citations==[]
