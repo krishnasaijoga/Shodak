@@ -137,3 +137,28 @@ def test_citations_can_be_disabled():
     )
     draft=generate_draft(report,request)
     assert draft.sections[0].citations==[]
+
+
+
+def test_writer_handles_insufficient_evidence():
+    report=ResearchReport(
+        request=ResearchRequest(
+            topic="Experimental AI system"
+        ),
+        research_questions=[],
+        sources=[],
+        evidence=[],
+        contradictions=[],
+        quality=ResearchQuality(
+            sufficient_evidence=False,
+            source_count=0,
+            evidence_count=0,
+            coverage_score=0.0,
+            reason="Too little supporting evidence was extracted."
+        )
+    )
+    request=WritingRequest(output_type=OutputType.blog)
+    draft=generate_draft(report,request)
+    assert len(draft.sections)==1
+    assert draft.sections[0].heading=="Research Limitation"
+    assert "insufficient" in draft.sections[0].content.lower()

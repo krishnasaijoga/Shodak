@@ -5,7 +5,7 @@ from shodak.models.writing import WritingRequest
 from shodak.writing.templates import get_writing_template
 
 
-def build_evidence_summary(report:ResearchReport)->str:
+def _build_evidence_summary(report:ResearchReport)->str:
     if not report.evidence:
         return "Insufficient evidence available to support this section"
     claims=[evidence.claim for evidence in report.evidence[:3]]
@@ -26,7 +26,22 @@ def generate_draft(
 )->WritingDraft:
     template=get_writing_template(request.output_type)
     title=request.title or report.request.topic.title()
-    evidence_summary=build_evidence_summary(report)
+
+    if not report.quality.sufficient_evidence:
+        warning="The available research evidence is currently insufficient to produce a fully supported draft."
+        return WritingDraft(
+            output_type=request.output_type,
+            title=title,
+            sections=[
+                DraftSection(
+                    heading="Research Limitation",
+                    content=warning,
+                    citations=[]
+                )
+            ]
+        )
+
+    evidence_summary=_build_evidence_summary(report)
     citations=_collect_citations(report)
 
     sections=[]
