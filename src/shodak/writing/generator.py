@@ -20,6 +20,17 @@ def _collect_citations(report:ResearchReport)->list[Citation]:
     return citations
 
 
+def _build_contradiction_summary(report:ResearchReport)->str|None:
+    if not report.contradictions:
+        return None
+    summaries=[]
+    for contradiction in report.contradictions:
+        summaries.append(
+            f"{contradiction.evidence_a} \n\nHowever, another source reports: \n{contradiction.evidence_b}"
+        )
+    return " ".join(summaries)
+
+
 def generate_draft(
         report:ResearchReport,
         request:WritingRequest
@@ -43,11 +54,21 @@ def generate_draft(
 
     evidence_summary=_build_evidence_summary(report)
     citations=_collect_citations(report)
+    contradiction_summary=_build_contradiction_summary(report)
 
     sections=[]
     for heading in template:
         sections.append(
             DraftSection(heading=heading,content=evidence_summary,citations=citations if request.include_citation else [])
+        )
+
+    if contradiction_summary:
+        sections.append(
+            DraftSection(
+                heading="Conflicting Evidence",
+                content=contradiction_summary,
+                citations=citations if request.include_citation else []
+            )
         )
 
     return WritingDraft(

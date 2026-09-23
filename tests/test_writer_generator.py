@@ -1,4 +1,5 @@
 from shodak.models.citation import Citation
+from shodak.models.contradiction import Contradiction
 from shodak.models.evidence import Evidence
 from shodak.models.report import ResearchQuality, ResearchReport
 from shodak.models.research import ResearchRequest
@@ -162,3 +163,45 @@ def test_writer_handles_insufficient_evidence():
     assert len(draft.sections)==1
     assert draft.sections[0].heading=="Research Limitation"
     assert "insufficient" in draft.sections[0].content.lower()
+
+
+def test_writer_surfaces_conflicting_evidence():
+    evidence_a=Evidence(
+        claim="Retrieval improves answer quality.",
+        supporting_text="Supporting evidence A.",
+        citation=Citation(
+            source_title="Paper One",
+            source_url="https://example.com/"
+        ),
+        confidence=0.8
+    )
+    evidence_b = Evidence(
+        claim="Retrieval does not improve answer quality.",
+        supporting_text="Supporting evidence B.",
+        citation=Citation(
+            source_title="Paper Two",
+            source_url="https://example.com/2",
+        ),
+        confidence=0.8,
+    )
+    report=ResearchReport(
+        request=ResearchRequest(
+            topic="retrieval augmented generation"
+        ),
+        research_questions=[],
+        sources=[],
+        evidence=[evidence_a, evidence_b],
+        contradictions=[
+            Contradiction(
+                topic="Retrieval effectiveness",
+                evidence_a=evidence_a,
+                evidence_b=evidence_b,
+                explanation="The sources reach conflicting conclusions."
+            )
+        ],
+        quality=ResearchQuality(sufficient_evidence=True,source_count=0,evidence_count=0,coverage_score=0.0)
+    )
+    request=WritingRequest(output_type=OutputType.blog)
+    draft=generate_draft(report,request)
+    headings=[section.heading for section in draft.sections]
+    assert "Conflicting Evidence" in headings
