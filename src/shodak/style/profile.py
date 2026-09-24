@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from shodak.models.style import StyleDocument
+from shodak.models.style import StyleDocument, StyleDocumentType
 from shodak.style.features import StyleFeatures, extract_style_features
 
 
@@ -33,3 +33,16 @@ def build_style_profile(
         question_frequency=sum(item.question_frequency for item in features)/count,
         exclamation_frequency=sum(item.exclamation_frequency for item in features)/count
     )
+
+
+def build_style_profiles_by_type(
+        documents:list[StyleDocument]
+)->dict[StyleDocumentType,StyleProfile]:
+    grouped: dict[StyleDocumentType,list[StyleDocument]]={}
+    for document in documents:
+        grouped.setdefault(
+            document.document_type,[]
+        ).append(document)
+    return {
+        document_type:build_style_profile(group_documents) for document_type, group_documents in grouped.items()
+    }
