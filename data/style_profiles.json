@@ -8,6 +8,15 @@
     "question_frequency": 0.06987113102441771,
     "exclamation_frequency": 0.002631578947368421
   },
+  "linkedin": {
+    "document_count": 3,
+    "average_sentence_length": 13.880392156862746,
+    "average_paragraph_length": 14.83021978021978,
+    "vocabulary_richness": 0.6968828406226154,
+    "first_person_frequency": 0.04709280200879748,
+    "question_frequency": 0.24836601307189543,
+    "exclamation_frequency": 0.03333333333333333
+  },
   "research_paper": {
     "document_count": 1,
     "average_sentence_length": 13.383259911894273,
