@@ -1,5 +1,5 @@
-from shodak.style.mapping import get_style_document_type
 from shodak.models.writing import OutputType
+from shodak.style.mapping import get_style_document_type
 from shodak.style.profile import StyleDocumentType
 
 
