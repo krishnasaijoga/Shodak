@@ -1,0 +1,20 @@
+{
+  "blog": {
+    "document_count": 24,
+    "average_sentence_length": 14.445135689974421,
+    "average_paragraph_length": 42.72084187575098,
+    "vocabulary_richness": 0.5120153528197117,
+    "first_person_frequency": 0.02998481443641339,
+    "question_frequency": 0.06987113102441771,
+    "exclamation_frequency": 0.002631578947368421
+  },
+  "research_paper": {
+    "document_count": 1,
+    "average_sentence_length": 13.383259911894273,
+    "average_paragraph_length": 69.04545454545455,
+    "vocabulary_richness": 0.27024358130348913,
+    "first_person_frequency": 0.008887425938117182,
+    "question_frequency": 0.0,
+    "exclamation_frequency": 0.0
+  }
+}

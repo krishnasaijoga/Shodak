@@ -1,0 +1,75 @@
+The Silent Superbug Crisis: Why Antibiotics May Stop Working Soon
+
+Imagine it’s a busy Monday. You’re at work and you get a call from school: your 8-year-old son is seriously ill and has been rushed to the hospital.
+
+You reach the hospital as fast as you can, and meet the doctor. He tells you that he’s infected with a superbug — an antibiotic-resistant bacterium.
+
+Your heart sinks. There is nothing in the world that you won’t do to save your young one. But, no medication works. This is not something any parent should go through.
+
+This isn’t a distant reality — it’s our reality, if we don’t act on Antimicrobial Resistance (AMR).
+
+Press enter or click to view image in full size
+
+Photo by Alexander Grey on Unsplash
+What Is AMR?
+
+AMR occurs when microorganisms like bacteria, virus, fungi, and parasites evolve to resist medications that were once effective against them. It includes antibiotics, antivirals, antifungals, and antiparasitics.
+
+According to World Health Organization (WHO), AMR is one of the top global public health and development threats. It is estimated that AMR is directly responsible for 1.27 million deaths and indirectly caused 4.95 million in 2019.
+
+Press enter or click to view image in full size
+
+Trends of Antibiotic Resistance% of E.coli microbial induced infections in USA. Trends Chart by cddep.org sourced from resistancemap.onehealthtrust.org
+Why a Serious Threat?
+Ineffective Treatment
+Common diseases like tuberculosis, pneumonia, gonorrhea, and salmonellosis are becoming harder to treat.
+Surgeries, chemotherapy, and organ transplant procedures heavily rely on antimicrobials. AMR is making these procedures risky and is causing new complications.
+Longer Illness and Hospital Stays
+AMR causes microbes to resist antimicrobials, so recovery takes more time and more intensive care. This burdens the healthcare system.
+Increased Mortality and Morbidity
+If left unchecked, can cause 10 million deaths annually by 2050, surpassing cancer, according to a study by The Lancet.
+Economic Burden
+Prolonged weakness causes economic losses. The World Bank estimates global economic losses of $100 trillion by 2050.
+It disproportionately affects low- and middle-income countries.
+Global Spread
+AMR knows no boundaries. It spreads like a pandemic and gives rise to even tougher versions when they mutate and mixes with other genes.
+Slow Development of New Drugs
+Resistance is rising at a pace where research into new drugs is unable to catch up. It raises fear of “post antibiotic era”, where common infections become untreatable.
+Why AMR is Rising?
+Mutation
+One of the biggest culprits? Mutation. Microbes mutate faster, so some acquire resistance. Few microbes gain resistance from acquired ones through gene transfer.
+Misuse and Overuse of Antimicrobials
+The biggest drivers: incorrect usage, inappropriate prescription, self-medication, incomplete course of treatment, and excessive use in animals are main reasons microbes get selectively pressurized — either get killed or if they carry resistance gene, they survive and replicate.
+Inadequate Diagnostics
+Lack of precise diagnosis leads to unnecessary use of antimicrobials, fostering resistance.
+Poor Hygiene and Infection Control
+Insufficient sanitation and infection prevention measures allow resistant microbes to spread quickly and easily. For example, Tuberculosis is spread easily with low ventilation and sanitation.
+Weak Global Surveillance and Regulation
+Most countries lack regulation of antibiotics, monitoring systems to track antimicrobial resistance patterns, and public awareness on AMR.
+Globalization
+A resistant bug can spread across the world within days, just like COVID-19 SARS virus.
+Stagnation of Antimicrobial Development
+Pharmaceuticals have pulled back from antimicrobial research because of low yield, minimal usage, and its scientific challenges. As a result no major antibiotics have been discovered since the 1980s.
+Preventive Use in Agriculture and Animal Husbandry
+Used to promote growth and prevent diseases in crowded conditions. This mirrors in humans leading to cross-resistance. Over 70% of all antibiotics sold globally are used in animals, not people.
+Counter Measures
+Antimicrobial Stewardship
+Prescribing antimicrobials only when necessary in right dose and for right duration. Ban over-the-counter sales— making requirement of prescription mandatory. Regulating antibiotics in agriculture, animal husbandry, and aquaculture.
+Infection Prevention and Control
+Providing vaccinations to infections like TB, pneumonia, and influenza. Promoting hygiene, sanitation in schools, healthcare centers especially in low- and middle-income countries.
+Surveillance and Monitoring
+Trace resistance trends in humans, food, and animals. Sharing these findings transparently through national and international systems like WHO’s GLASS (Global Antimicrobial Resistance and use Surveillance System)
+Incentivize Research and Development
+Public-private partnerships to foster research into new antibiotics.
+One Health Approach
+Recognize human, animal, and environment health are interconnected. Regulating antibiotic use in agriculture, food, animal husbandry, and aquaculture industries.
+Education and Advocacy
+Using mass media, school curriculum, and training programs to educate public on AMR. Empower local communities for better practices.
+Strong Policy and Governance
+Government action is crucial. It has to implement national policies that align with WHO’s Global Action Plan. Also, it has to monitor and penalize non-compliance by hospitals, pharma, and industry.
+Conclusion
+AMR is a rising global public health issue that can make current healthcare practices, treatments, and procedures ineffective. It requires action at individual, national, and international levels.
+
+The fight against AMR isn’t just for scientists and governments — it starts with us. Every time we take an antibiotic, finish or skip a dose, or choose hygiene — it matters. Let’s not wait for a heartbreak to learn the lesson.
+
+If you’ve learned something — do clap (or 50), share, and would love to hear your thoughts on AMR in comments.
