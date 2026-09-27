@@ -9,6 +9,7 @@ authors = [
 ]
 dependencies = [
     "httpx>=0.28.1",
+    "langgraph",
     "pydantic>=2.13.5",
     "python-dotenv>=1.2.3",
 ]
