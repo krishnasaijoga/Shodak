@@ -11,5 +11,5 @@ class ShodakState(TypedDict, total=False):
     writing_request: WritingRequest
     research_report:ResearchReport
     writing_draft:WritingDraft
-    rendered_ouptut:str
+    rendered_output:str
     error: str|None

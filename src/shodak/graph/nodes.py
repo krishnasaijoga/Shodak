@@ -18,6 +18,7 @@ def writer_node(state:ShodakState)->ShodakState:
         report=report,
         request=request
     )
+
     return {
         "writing_draft":draft
     }
@@ -30,6 +31,7 @@ def renderer_node(state:ShodakState)->ShodakState:
         draft,
         include_references=writing_request.include_references
     )
+
     return {
-        "rendered_ouptut":rendered
+        "rendered_output":rendered
     }

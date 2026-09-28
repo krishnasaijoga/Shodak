@@ -25,5 +25,5 @@ def test_renderer_node_adds_rendered_output():
         return_value="# AI agents in healthcare"
     ):
         result=renderer_node(state)
-    assert  "rendered_ouptut" in result
-    assert result["rendered_ouptut"]=="# AI agents in healthcare"
+    assert  "rendered_output" in result
+    assert result["rendered_output"]=="# AI agents in healthcare"
