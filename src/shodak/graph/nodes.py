@@ -1,6 +1,7 @@
 from shodak.graph.state import ShodakState
 from shodak.research.report import build_research_report
 from shodak.writing.generator import generate_draft
+from shodak.writing.renderer import render_markdown
 
 
 def research_node(state:ShodakState)->ShodakState:
@@ -19,4 +20,16 @@ def writer_node(state:ShodakState)->ShodakState:
     )
     return {
         "writing_draft":draft
+    }
+
+
+def renderer_node(state:ShodakState)->ShodakState:
+    draft=state["writing_draft"]
+    writing_request=state["writing_request"]
+    rendered=render_markdown(
+        draft,
+        include_references=writing_request.include_references
+    )
+    return {
+        "rendered_ouptut":rendered
     }
