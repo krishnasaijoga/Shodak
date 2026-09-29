@@ -6,8 +6,13 @@ from shodak.writing.renderer import render_markdown
 
 def research_node(state:ShodakState)->ShodakState:
     request=state["research_request"]
-    report=build_research_report(request)
-    return {"research_report":report}
+    try:
+        report=build_research_report(request)
+        return {"research_report":report, "error":None}
+    except Exception as exc:    # noqa: BLE001
+        return {
+            "error":str(exc)
+        }
 
 
 
