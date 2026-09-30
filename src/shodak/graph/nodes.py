@@ -21,7 +21,9 @@ def writer_node(state:ShodakState)->ShodakState:
     request=state["writing_request"]
     draft=generate_draft(
         report=report,
-        request=request
+        request=request,
+        style_profile=state.get("style_profile"),
+        style_examples=state.get("style_examples",[])
     )
 
     return {
