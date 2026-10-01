@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock, patch
 
+from shodak.models.research import ResearchRequest
 from shodak.research.llm_planner import ResearchPlan, build_llm_research_questions
 from shodak.research.planner import build_research_questions_with_fallback
-from shodak.research.report import ResearchRequest
 
 
 def test_llm_research_planner():
