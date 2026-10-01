@@ -6,13 +6,13 @@ from shodak.research.coverage import calculate_research_coverage
 from shodak.research.deduplicator import deduplicate_sources
 from shodak.research.evidence import extract_evidence_from_source
 from shodak.research.evidence_deduplicator import deduplicate_evidence
-from shodak.research.planner import build_research_questions
+from shodak.research.planner import build_research_questions_with_fallback
 from shodak.research.quality import evaluate_research_quality
 from shodak.research.ranker import rank_sources
 
 
 def build_research_report(request:ResearchRequest)->ResearchReport:
-    questions=build_research_questions(request)
+    questions=build_research_questions_with_fallback(request)
     sources=search_academic_sources(
         query=request.topic,
         limit=request.max_sources

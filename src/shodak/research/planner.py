@@ -1,4 +1,5 @@
 from shodak.models.research import ResearchRequest
+from shodak.research.llm_planner import build_llm_research_questions
 
 
 def build_research_questions(request: ResearchRequest)->list[str]:
@@ -30,3 +31,12 @@ def build_research_questions(request: ResearchRequest)->list[str]:
     if request.depth.value=="standard":
         return questions[:6]
     return questions
+
+
+def build_research_questions_with_fallback(
+        request:ResearchRequest
+)->list[str]:
+    try:
+        return build_llm_research_questions(request)
+    except Exception: # noqa: BLE001
+        return build_research_questions(request)
