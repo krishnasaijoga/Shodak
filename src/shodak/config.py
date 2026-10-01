@@ -17,6 +17,30 @@ class Settings(BaseModel):
     log_level:str=Field(
         default_factory=lambda:os.getenv("LOG_LEVEL","INFO")
     )
+    openai_api_key:str|None=Field(default_factory=lambda:os.getenv("OPENAI_API_KEY"))
+    openai_model:str=Field(
+            default_factory=lambda: os.getenv(
+            "OPENAI_MODEL",
+            "gpt-5-mini"
+        )
+    )
+    llm_provider:str=Field(
+        default_factory=lambda:os.getenv(
+            "LLM_PROVIDER",
+            "groq"
+        )
+    )
+    groq_api_key:str|None=Field(
+        default_factory=lambda: os.getenv(
+            "GROQ_API_KEY"
+        )
+    )
+    groq_model:str=Field(
+        default_factory=lambda:os.getenv(
+            "GROQ_MODEL",
+            "openai/gpt-oss-120b"
+        )
+    )
 
 
 settings=Settings()
