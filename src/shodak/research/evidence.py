@@ -1,5 +1,6 @@
 from shodak.models.evidence import Citation, Evidence
 from shodak.models.source import Source
+from shodak.research.llm_evidence import extract_evidence_with_llm
 
 
 def extract_evidence_from_source(source:Source)->list[Evidence]:
@@ -29,3 +30,10 @@ def extract_evidence_from_source(source:Source)->list[Evidence]:
             )
         )
     return evidence_items
+
+
+def extract_evidence(source:Source)->list[Evidence]:
+    try:
+        return extract_evidence_with_llm(source)
+    except Exception: # noqa: BLE001
+        return extract_evidence_from_source(source)
