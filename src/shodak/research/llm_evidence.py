@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
-from shodak.models.source import Source
-from shodak.models.evidence import Evidence
+
 from shodak.llm.factory import get_llm
 from shodak.models.citation import Citation
+from shodak.models.evidence import Evidence
+from shodak.models.source import Source
 
 
 class ExtractedEvidenceItem(BaseModel):

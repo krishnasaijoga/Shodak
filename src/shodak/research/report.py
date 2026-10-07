@@ -1,7 +1,7 @@
 from shodak.models.report import ResearchReport
 from shodak.models.research import ResearchRequest
 from shodak.research.academic import search_academic_sources
-from shodak.research.contradictions import detect_contradictions
+from shodak.research.contradictions import detect_contradictions_with_fallback
 from shodak.research.coverage import calculate_research_coverage
 from shodak.research.deduplicator import deduplicate_sources
 from shodak.research.evidence import extract_evidence
@@ -24,7 +24,7 @@ def build_research_report(request:ResearchRequest)->ResearchReport:
         evidence.extend(extract_evidence(source))
     evidence=deduplicate_evidence(evidence)
     coverage_score=calculate_research_coverage(questions,evidence)
-    contradictions=detect_contradictions(evidence)
+    contradictions=detect_contradictions_with_fallback(evidence)
     quality=evaluate_research_quality(ranked_sources,evidence,coverage_score=coverage_score)
     return ResearchReport(
         request=request,

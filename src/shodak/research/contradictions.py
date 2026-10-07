@@ -1,5 +1,6 @@
 from shodak.models.contradiction import Contradiction
 from shodak.models.evidence import Evidence
+from shodak.research.llm_contradictions import detect_contradictions_with_llm
 
 NEGATION_ITEMS=[
     "not",
@@ -41,3 +42,10 @@ def detect_contradictions(
                 explanation=("The claims share similar terminology but differ in their use of negation.")
             ))
     return contradictions
+
+
+def detect_contradictions_with_fallback(evidence_items:list[Evidence])->list[Contradiction]:
+    try:
+        return detect_contradictions_with_llm(evidence_items)
+    except Exception: # noqa: BLE001
+        return detect_contradictions(evidence_items)
