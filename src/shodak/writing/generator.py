@@ -2,6 +2,8 @@ from shodak.models.citation import Citation
 from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.writing import WritingRequest
+from shodak.style.profile import StyleProfile
+from shodak.writing.llm_writer import generate_draft_with_llm
 from shodak.writing.templates import get_writing_template
 
 
@@ -31,9 +33,11 @@ def _build_contradiction_summary(report:ResearchReport)->str|None:
     return " ".join(summaries)
 
 
-def generate_draft(
+def generate_draft_deterministic(
         report:ResearchReport,
-        request:WritingRequest
+        request:WritingRequest,
+        style_profile:StyleProfile|None=None,
+        style_examples:list[str]|None=None
 )->WritingDraft:
     template=get_writing_template(request.output_type)
     title=request.title or report.request.topic.title()
@@ -76,3 +80,32 @@ def generate_draft(
         title=title,
         sections=sections
     )
+
+
+def generate_draft(
+        report:ResearchReport,
+        request:WritingRequest,
+        style_profile:StyleProfile|None=None,
+        style_examples:list[str]|None=None
+)->WritingDraft:
+    if not report.quality.sufficient_evidence:
+        return generate_draft_deterministic(
+            report=report,
+            request=request,
+            style_profile=style_profile,
+            style_examples=style_examples
+        )
+    try:
+        return generate_draft_with_llm(
+            report=report,
+            request=request,
+            style_profile=style_profile,
+            style_examples=style_examples
+        )
+    except Exception: # noqa:BLE001
+        return generate_draft_deterministic(
+            report=report,
+            request=request,
+            style_profile=style_profile,
+            style_examples=style_examples
+        )

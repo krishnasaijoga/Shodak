@@ -4,7 +4,7 @@ from shodak.models.evidence import Evidence
 from shodak.models.report import ResearchQuality, ResearchReport
 from shodak.models.research import ResearchRequest
 from shodak.models.writing import OutputType, WritingRequest
-from shodak.writing.generator import generate_draft
+from shodak.writing.generator import generate_draft_deterministic
 
 
 def test_generate_blog_writing():
@@ -36,7 +36,7 @@ def test_generate_blog_writing():
     request=WritingRequest(
         output_type=OutputType.blog
     )
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     assert draft.output_type==OutputType.blog
     assert draft.title=="Retrieval Augmented Generation"
     assert len(draft.sections)>0
@@ -64,7 +64,7 @@ def test_custom_title_is_used():
         output_type=OutputType.linkedin,
         title="Why AI agents matter"
     )
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     assert draft.title=="Why AI agents matter"
 
 
@@ -100,7 +100,7 @@ def test_draft_contains_citation():
         output_type=OutputType.blog,
         include_citation=True
     )
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     assert len(draft.sections[0].citations)==1
     assert draft.sections[0].citations[0].source_title=="Example Paper"
 
@@ -136,7 +136,7 @@ def test_citations_can_be_disabled():
         output_type=OutputType.linkedin,
         include_citation=False
     )
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     assert draft.sections[0].citations==[]
 
 
@@ -159,7 +159,7 @@ def test_writer_handles_insufficient_evidence():
         )
     )
     request=WritingRequest(output_type=OutputType.blog)
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     assert len(draft.sections)==1
     assert draft.sections[0].heading=="Research Limitation"
     assert "insufficient" in draft.sections[0].content.lower()
@@ -202,6 +202,6 @@ def test_writer_surfaces_conflicting_evidence():
         quality=ResearchQuality(sufficient_evidence=True,source_count=0,evidence_count=0,coverage_score=0.0)
     )
     request=WritingRequest(output_type=OutputType.blog)
-    draft=generate_draft(report,request)
+    draft=generate_draft_deterministic(report,request)
     headings=[section.heading for section in draft.sections]
     assert "Conflicting Evidence" in headings
