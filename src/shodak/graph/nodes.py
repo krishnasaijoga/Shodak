@@ -1,5 +1,6 @@
 from shodak.graph.state import ShodakState
 from shodak.research.report import build_research_report
+from shodak.research.synthesis import synthesize_research_with_fallback
 from shodak.writing.generator import generate_draft
 from shodak.writing.renderer import render_markdown
 
@@ -41,4 +42,12 @@ def renderer_node(state:ShodakState)->ShodakState:
 
     return {
         "rendered_output":rendered
+    }
+
+
+def synthesis_node(state:ShodakState)->ShodakState:
+    report=state["research_report"]
+    synthesis=synthesize_research_with_fallback(report)
+    return {
+        "research_synthesis":synthesis
     }
