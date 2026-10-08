@@ -1,6 +1,7 @@
 from shodak.models.citation import Citation
 from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
+from shodak.models.synthesis import ResearchSynthesis
 from shodak.models.writing import WritingRequest
 from shodak.style.profile import StyleProfile
 from shodak.writing.llm_writer import generate_draft_with_llm
@@ -86,7 +87,8 @@ def generate_draft(
         report:ResearchReport,
         request:WritingRequest,
         style_profile:StyleProfile|None=None,
-        style_examples:list[str]|None=None
+        style_examples:list[str]|None=None,
+        research_synthesis:ResearchSynthesis|None=None
 )->WritingDraft:
     if not report.quality.sufficient_evidence:
         return generate_draft_deterministic(
@@ -100,7 +102,8 @@ def generate_draft(
             report=report,
             request=request,
             style_profile=style_profile,
-            style_examples=style_examples
+            style_examples=style_examples,
+            research_synthesis=research_synthesis
         )
     except Exception: # noqa:BLE001
         return generate_draft_deterministic(

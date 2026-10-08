@@ -24,7 +24,8 @@ def writer_node(state:ShodakState)->ShodakState:
         report=report,
         request=request,
         style_profile=state.get("style_profile"),
-        style_examples=state.get("style_examples",[])
+        style_examples=state.get("style_examples",[]),
+        research_synthesis=state.get("research_synthesis")
     )
 
     return {

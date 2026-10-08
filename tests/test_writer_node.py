@@ -94,5 +94,6 @@ def test_writer_node_passes_style_context():
         report=report,
         request=writing_request,
         style_profile=None,
-        style_examples=["Example passage written in my style."]
+        style_examples=["Example passage written in my style."],
+        research_synthesis=None
     )

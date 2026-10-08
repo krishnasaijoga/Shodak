@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 from shodak.models.citation import Citation
 from shodak.models.evidence import Evidence
 from shodak.models.report import ResearchQuality, ResearchReport, ResearchRequest
+from shodak.models.synthesis import ResearchSynthesis, SynthesizedFinding
 from shodak.models.writing import OutputType, WritingRequest
 from shodak.writing.llm_writer import GeneratedDraft, GeneratedSection, generate_draft_with_llm
 
@@ -33,6 +34,21 @@ def test_llm_writer_generates_structured_draft():
             coverage_score=0.5
         )
     )
+
+    synthesis=ResearchSynthesis(
+            key_findings=[
+                SynthesizedFinding(
+                    finding="Retrieval can improve access to external knowledge.",
+                    supporting_evidence_indices=[0],
+                    confidence=0.8
+                )
+            ],
+            uncertainties=["Effectiveness depends on retrieval quality."],
+            contradictions=[],
+            research_gaps=[],
+            overall_confidence=0.8
+    )
+
     request=WritingRequest(
         output_type=OutputType.blog
     )
@@ -61,7 +77,8 @@ def test_llm_writer_generates_structured_draft():
     ):
         draft=generate_draft_with_llm(
             report=report,
-            request=request
+            request=request,
+            research_synthesis=synthesis
         )
     assert draft.title=="Understanding Retrieval Augmented Generation"
     assert len(draft.sections)==2
