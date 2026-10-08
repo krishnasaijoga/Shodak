@@ -5,6 +5,7 @@ from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.writing import WritingRequest
 from shodak.style.profile import StyleProfile
+from shodak.writing.citation_grounding import find_relevant_citations
 from shodak.writing.templates import get_writing_template
 
 
@@ -94,7 +95,10 @@ Requirements:
             DraftSection(
                 heading=section.heading,
                 content=section.content,
-                citations=[]
+                citations=find_relevant_citations(
+                    section.content,
+                    report.evidence
+                )
             )
             for section in result.sections
         ]
