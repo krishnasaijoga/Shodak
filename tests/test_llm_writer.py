@@ -72,14 +72,22 @@ def test_llm_writer_generates_structured_draft():
     base_llm.with_structured_output.return_value=structured_llm
 
     with patch(
-        "shodak.writing.llm_writer.get_llm",
-        return_value=base_llm
+        "shodak.writing.llm_writer.invoke_structured_with_fallback",
+        return_value=GeneratedDraft(
+            title="Understanding RAG",
+            sections=[
+                GeneratedSection(
+                    heading="Introduction",
+                    content="Retrieval improves access to external knowledge."
+                )
+            ]
+        )
     ):
         draft=generate_draft_with_llm(
             report=report,
             request=request,
             research_synthesis=synthesis
         )
-    assert draft.title=="Understanding Retrieval Augmented Generation"
-    assert len(draft.sections)==2
+    assert draft.title=="Understanding RAG"
+    assert len(draft.sections)==1
     assert draft.sections[0].heading=="Introduction"

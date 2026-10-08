@@ -27,13 +27,14 @@ def _get_openai_llm()->BaseChatModel:
     )
 
 
-def get_llm()->BaseChatModel:
-    provider=settings.llm_provider.lower().strip()
-
+def get_llm_for_provider(provider:str)->BaseChatModel:
+    provider=provider.lower()
     if provider=="groq":
         return _get_groq_llm()
     if provider=="openai":
         return _get_openai_llm()
-    raise ValueError(
-        f"Unsupported LLM provider: {settings.llm_provider}"
-    )
+    raise ValueError(f"Unsupported LLM provider: {provider}")
+
+
+def get_llm()->BaseChatModel:
+    return get_llm_for_provider(settings.llm_provider)

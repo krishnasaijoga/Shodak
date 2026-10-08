@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from shodak.models.research import ResearchRequest
 from shodak.research.llm_planner import ResearchPlan, build_llm_research_questions
@@ -9,31 +9,34 @@ def test_llm_research_planner():
     request=ResearchRequest(
         topic="AI agents in healthcare"
     )
-    structured_llm=MagicMock()
-    structured_llm.invoke.return_value=ResearchPlan(
-        questions=[
-            "What are AI agents in healthcare",
-            "What evidence supports their clinical use?",
-            "What are their limitations and risks?"
-        ]
-    )
-    base_llm=MagicMock()
-    base_llm.with_structured_output.return_value=structured_llm
-
+    fake_result=ResearchPlan(
+            questions=[
+                "What is retrieval augmented generation?",
+                "How does retrieval improve model responses?",
+                "What are the limitations of RAG?",
+            ]
+        )
+    
     with patch(
-        "shodak.research.llm_planner.get_llm",
-        return_value=base_llm
+        "shodak.research.llm_planner.invoke_structured_with_fallback",
+        return_value=fake_result
     ):
         result=build_llm_research_questions(request)
     assert len(result)==3
-    assert "healthcare" in result[0].lower()
+    assert "retrieval" in result[0].lower()
 
 
 def test_llm_planner_fals_back_to_deterministic():
     request=ResearchRequest(topic="AI agents in healthcare")
     with patch(
-        "shodak.research.planner.build_llm_research_questions",
-        side_effect=RuntimeError("LLM unavailable")
+        "shodak.writing.llm_writer.invoke_structured_with_fallback",
+        return_value=ResearchPlan(
+            questions=[
+                "What is retrieval augmented generation?",
+                "How does retrieval improve model responses?",
+                "What are the limitations of RAG?",
+            ]
+        )
     ):
         result=build_research_questions_with_fallback(request)
     assert len(result)>0

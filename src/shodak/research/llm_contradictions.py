@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from shodak.llm.factory import get_llm
+from shodak.llm.router import invoke_structured_with_fallback
 from shodak.models.contradiction import Contradiction
 from shodak.models.evidence import Evidence
 
@@ -14,7 +14,6 @@ def detect_contradiction_with_llm(
     evidence_a:Evidence,
     evidence_b:Evidence
 )->Contradiction | None:
-    llm=get_llm().with_structured_output(ContradictionResult)
     prompt=f"""
     You are comparing two research claims
 
@@ -31,7 +30,7 @@ def detect_contradiction_with_llm(
     - Distinguish contradiction from partial disagreement or different scope.
     - Return structured ouptut only.
     """
-    result=llm.invoke(prompt)
+    result=invoke_structured_with_fallback(schema=ContradictionResult,prompt=prompt)
     if not result.is_contradiction:
         return None
     return Contradiction(

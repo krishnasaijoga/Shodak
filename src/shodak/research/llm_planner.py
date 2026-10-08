@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from shodak.llm.factory import get_llm
+from shodak.llm.router import invoke_structured_with_fallback
 from shodak.models.research import ResearchRequest
 
 
@@ -11,7 +11,6 @@ class ResearchPlan(BaseModel):
 def build_llm_research_questions(
         request:ResearchRequest
 )->list[str]:
-    llm=get_llm().with_structured_output(ResearchPlan)
     prompt=f"""
 You are a research planning assistant.
 
@@ -32,5 +31,5 @@ Requirements:
 - Do not answer the question.
 - Return only structured output.
 """
-    result=llm.invoke(prompt)
+    result=invoke_structured_with_fallback(schema=ResearchPlan,prompt=prompt)
     return result.questions

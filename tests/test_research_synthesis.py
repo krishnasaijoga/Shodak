@@ -52,9 +52,24 @@ def test_llm_research_synthesis():
 
     base_llm=MagicMock()
     base_llm.with_structured_output.return_value=structured_llm
+
+    expected_synthesis = ResearchSynthesis(
+        key_findings=[
+            SynthesizedFinding(
+                finding="Retrieval can improve access to external knowledge.",
+                supporting_evidence_indices=[0],
+                confidence=0.8,
+            )
+        ],
+        uncertainties=[],
+        contradictions=[],
+        research_gaps=[],
+        overall_confidence=0.8,
+    )
+
     with patch(
-        "shodak.research.synthesis.get_llm",
-        return_value=base_llm
+        "shodak.research.synthesis.invoke_structured_with_fallback",
+        return_value=expected_synthesis,
     ):
         result=synthesize_research(report)
 

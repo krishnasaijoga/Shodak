@@ -41,6 +41,10 @@ class Settings(BaseModel):
             "openai/gpt-oss-120b"
         )
     )
+    llm_fallback_provider:str|None=os.getenv(
+        "LLM_FALLBACK_PROVIDER",
+        "openai"
+    )
 
 
 settings=Settings()

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from shodak.llm.factory import get_llm
+from shodak.llm.router import invoke_structured_with_fallback
 from shodak.models.citation import Citation
 from shodak.models.evidence import Evidence
 from shodak.models.source import Source
@@ -20,7 +20,7 @@ class ExtractedEvidence(BaseModel):
 def extract_evidence_with_llm(source:Source)->list[Evidence]:
     if not source.abstract:
         return []
-    llm=get_llm().with_structured_output(ExtractedEvidence)
+
     prompt=f"""
 You are extracting evidence from an academic source.
 
@@ -39,7 +39,7 @@ Requirements:
 - confidence must represent how clarly the abstract supports the claim.
 - Returns structured output only.
 """
-    result=llm.invoke(prompt)
+    result=invoke_structured_with_fallback(schema=ExtractedEvidence, prompt=prompt)
     return [
         Evidence(
             claim=item.claim,

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from shodak.llm.factory import get_llm
+from shodak.llm.router import invoke_structured_with_fallback
 from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.synthesis import ResearchSynthesis
@@ -28,7 +28,6 @@ def generate_draft_with_llm(
         research_synthesis:ResearchSynthesis|None=None
 )->WritingDraft:
     
-    llm=get_llm().with_structured_output(GeneratedDraft)
     template=get_writing_template(request.output_type)
     
     evidence_text="\n".join(f"- {item.claim}" for item in report.evidence)
@@ -115,7 +114,7 @@ Requirements:
 - Stay reasonably close to the target word count.
 - Return structured output only.
 """
-    result=llm.invoke(prompt)
+    result=invoke_structured_with_fallback(schema=GeneratedDraft,prompt=prompt)
     return WritingDraft(
         output_type=request.output_type,
         title=result.title,

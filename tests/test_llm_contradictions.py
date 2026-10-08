@@ -34,9 +34,12 @@ def test_llm_detects_contradictions():
     base_llm.with_structured_output.return_value=structured_llm
 
     with patch(
-        "shodak.research.llm_contradictions.get_llm",
-        return_value=base_llm
+        "shodak.research.llm_contradictions.invoke_structured_with_fallback",
+        return_value=ContradictionResult(
+            is_contradiction=True,
+            explanation="The two claims disagree about the effect.",
+        ),
     ):
         result=detect_contradiction_with_llm(first,second)
     assert result is not None
-    assert "opposing" in result.explanation.lower()
+    assert "disagree" in result.explanation.lower()

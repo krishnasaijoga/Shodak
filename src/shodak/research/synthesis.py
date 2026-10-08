@@ -1,4 +1,4 @@
-from shodak.llm.factory import get_llm
+from shodak.llm.router import invoke_structured_with_fallback
 from shodak.models.report import ResearchReport
 from shodak.models.synthesis import ResearchSynthesis
 from shodak.research.synthesis_fallback import synthesize_research_deterministic
@@ -7,7 +7,6 @@ from shodak.research.synthesis_fallback import synthesize_research_deterministic
 def synthesize_research(
         report:ResearchReport
 )->ResearchSynthesis:
-    llm=get_llm().with_structured_output(ResearchSynthesis)
 
     evidence_text="\n".join(
         (
@@ -53,7 +52,7 @@ Tasks:
 - Assign confidence based only on the supplied evidence.
 - Return structured output only.
 """
-    return llm.invoke(prompt)
+    return invoke_structured_with_fallback(schema=ResearchSynthesis,prompt=prompt)
 
 
 def synthesize_research_with_fallback(
