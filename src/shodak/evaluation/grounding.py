@@ -7,7 +7,7 @@ from shodak.models.evidence import Evidence
 class GroundingResult(BaseModel):
     supported_sections:int
     total_sections:int
-    grounding_scores:float=Field(ge=0.0,le=1.0)
+    grounding_score:float=Field(ge=0.0,le=1.0)
     unsupported_sections:list[str]
 
 
@@ -31,6 +31,6 @@ def evaluate_grounding(
     return GroundingResult(
         supported_sections=supported_sections,
         total_sections=total_sections,
-        grounding_scores=grounding_score,
+        grounding_score=grounding_score,
         unsupported_sections=unsupported_sections
     )

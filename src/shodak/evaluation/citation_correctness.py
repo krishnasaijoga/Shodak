@@ -19,7 +19,7 @@ def _tokenize(text:str)->set[str]:
 
 def evaluate_citation_correctness(
         draft:WritingDraft,
-        evidence_item:list[Evidence],
+        evidence_items:list[Evidence],
         minimum_overlap:int=2
 )->CitationCorrectnessResult:
     correct_citations=0
@@ -32,7 +32,7 @@ def evaluate_citation_correctness(
         for citation in section.citations:
             total_citations+=1
             matching_evidence=[
-                evidence for evidence in evidence_item if evidence.citation==citation
+                evidence for evidence in evidence_items if evidence.citation==citation
             ]
 
             citation_is_correct=False

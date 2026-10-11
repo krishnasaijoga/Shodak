@@ -35,7 +35,7 @@ def test_correct_citation():
             )
         ],
     )
-    result=evaluate_citation_correctness(draft=draft,evidence_item=evidence)
+    result=evaluate_citation_correctness(draft=draft,evidence_items=evidence)
 
     assert result.correct_citations==1
     assert result.total_citations==1
@@ -71,7 +71,7 @@ def test_incorrect_citation():
             )
         ],
     )
-    result=evaluate_citation_correctness(draft=draft,evidence_item=evidence)
+    result=evaluate_citation_correctness(draft=draft,evidence_items=evidence)
     assert result.correct_citations==0
     assert result.total_citations==1
     assert result.citation_correctness_score==0.0

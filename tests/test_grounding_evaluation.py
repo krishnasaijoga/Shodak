@@ -31,5 +31,5 @@ def test_grounding_score():
     )
     assert result.supported_sections==1
     assert result.total_sections==2
-    assert result.grounding_scores==0.5
+    assert result.grounding_score==0.5
     assert result.unsupported_sections==["Discussion"]
