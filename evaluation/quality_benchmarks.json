@@ -1,0 +1,35 @@
+[
+    {
+    "name":"well_grounded_blog",
+    "expected":{
+      "min_grounding_score":0.8,
+      "min_citation_correctness_score":0.8,
+      "min_hallucination_safety_score":0.8,
+      "min_overall_quality_score":0.75
+    }
+  },
+  {
+    "name":"unsupported_claims",
+    "expected":{
+      "max_hallucination_safety_score":0.5
+    }
+  },
+  {
+    "name":"wrong_citation",
+    "expected":{
+      "max_citation_correctness_score":0.5
+    }
+  },
+  {
+    "name":"missing_blog_sections",
+    "expected":{
+      "max_format_compliance_score":0.6
+    }
+  },
+  {
+    "name":"weak_research",
+    "expected":{
+      "max_research_quality_score":0.5
+    }
+  }
+]
