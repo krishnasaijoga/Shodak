@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from shodak.evaluation.scorecard import EvaluationScorecard
 from shodak.graph.workflow import build_workflow
 from shodak.models.writing import OutputType, WritingRequest
 from shodak.research.quality import ResearchQuality
@@ -32,7 +33,16 @@ def test_orchestrated_workflow_success():
         title="AI agents in healthcare",
         sections=[]
     )
-    workflow=build_workflow()
+    passing_scorecard=EvaluationScorecard(
+        grounding_score=0.9,
+        citation_correctness_score=0.9,
+        hallucination_safety_score=0.9,
+        style_similarity_score=0.9,
+        format_compliance_score=1.0,
+        research_quality_score=0.9,
+        overall_quality_score=0.92
+    )
+    
     with (
         patch(
             "shodak.graph.nodes.build_research_report",
@@ -45,8 +55,17 @@ def test_orchestrated_workflow_success():
         patch(
             "shodak.graph.nodes.render_markdown",
             return_value="# AI agents in healthcare"
+        ),
+        patch(
+            "shodak.graph.nodes.evaluate_output",
+            return_value=passing_scorecard
+        ),
+        patch(
+            "shodak.graph.routing.should_revise",
+            return_value=False
         )
     ):
+        workflow=build_workflow()
         result=workflow.invoke(
             {
                 "research_request":research_request,

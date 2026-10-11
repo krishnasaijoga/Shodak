@@ -38,7 +38,7 @@ def test_workflow_runs_end_to_end():
         sections=[]
     )
 
-    workflow=build_workflow()
+    
     with(
         patch(
             "shodak.graph.nodes.build_research_report",
@@ -51,8 +51,13 @@ def test_workflow_runs_end_to_end():
         patch(
             "shodak.graph.nodes.render_markdown",
             return_value="# AI agents in healthcare"
+        ),
+        patch(
+            "shodak.graph.routing.should_revise",
+            return_value=False
         )
     ):
+        workflow=build_workflow()
         result=workflow.invoke(
             {
                 "research_request":research_request,

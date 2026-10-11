@@ -1,8 +1,10 @@
+from shodak.evaluation.scorecard import evaluate_output
 from shodak.graph.state import ShodakState
 from shodak.research.report import build_research_report
 from shodak.research.synthesis import synthesize_research_with_fallback
 from shodak.writing.generator import generate_draft
 from shodak.writing.renderer import render_markdown
+from shodak.writing.revision import revise_draft_with_llm
 
 
 def research_node(state:ShodakState)->ShodakState:
@@ -51,4 +53,39 @@ def synthesis_node(state:ShodakState)->ShodakState:
     synthesis=synthesize_research_with_fallback(report)
     return {
         "research_synthesis":synthesis
+    }
+
+
+def evaluator_node(
+    state:ShodakState
+)->ShodakState:
+    draft=state["writing_draft"]
+    report=state["research_report"]
+
+    scorecard=evaluate_output(
+        draft=draft,
+        report=report,
+        style_profile=state.get("style_profile")
+    )
+
+    return {
+        "evaluation_scorecard":scorecard
+    }
+
+
+def revision_node(
+    state:ShodakState
+)->ShodakState:
+    draft=state["writing_draft"]
+    report=state["research_report"]
+    scorecard=state["evaluation_scorecard"]
+    revised_draft=revise_draft_with_llm(
+        draft=draft,
+        report=report,
+        scorecard=scorecard
+    )
+    revision_count=state.get("revision_count",0)+1
+    return {
+        "writing_draft":revised_draft,
+        "revision_count":revision_count
     }

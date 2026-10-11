@@ -1,5 +1,6 @@
 from typing import TypedDict
 
+from shodak.evaluation.scorecard import EvaluationScorecard
 from shodak.models.draft import WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.research import ResearchRequest
@@ -20,3 +21,5 @@ class ShodakState(TypedDict, total=False):
     style_profile:StyleProfile|None
     style_examples:list[str]
     research_synthesis:ResearchSynthesis
+    evaluation_scorecard:EvaluationScorecard
+    revision_count:int
