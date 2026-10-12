@@ -10,7 +10,7 @@ ENV_FILE=BASE_DIR/".env"
 load_dotenv(ENV_FILE)
 
 class Settings(BaseModel):
-    app_name:str="shodak"
+    app_name:str="Shodak"
     environment:str=Field(
         default_factory= lambda: os.getenv("APP_ENV","development")
     )

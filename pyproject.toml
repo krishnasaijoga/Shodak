@@ -8,12 +8,14 @@ authors = [
     { name = "Krishna Sai Joga" }
 ]
 dependencies = [
+    "fastapi>=0.143.0",
     "httpx>=0.28.1",
     "langchain-groq>=1.1.3",
     "langchain-openai>=1.6.6",
     "langgraph",
     "pydantic>=2.13.5",
     "python-dotenv>=1.2.3",
+    "uvicorn>=0.54.0",
 ]
 
 [build-system]

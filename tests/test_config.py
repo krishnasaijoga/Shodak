@@ -4,7 +4,7 @@ from shodak.config import settings
 
 
 def test_default_app_name():
-    assert settings.app_name == "shodak"
+    assert settings.app_name == "Shodak"
 
 
 def test_environment_is_loaded():

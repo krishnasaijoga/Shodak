@@ -113,8 +113,8 @@ def test_end_to_end_quality_regression():
         hallucination_safety_score=1.0,
         format_compliance_score=1.0,
         style_similarity_score=1.0,
-        research_quality_score=0.78,
-        overall_quality_score=0.96
+        research_quality_score=0.5,
+        overall_quality_score=0.9
     )
 
     with (
