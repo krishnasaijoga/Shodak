@@ -10,10 +10,19 @@ class ResearchApiRequest(BaseModel):
     max_sources:int=Field(default=10,ge=1,le=50)
 
 
+class WritingEvidenceInput(BaseModel):
+    claim:str
+    supporting_text:str
+    source_title:str
+    source_url:str
+    confidence:float=Field(ge=0.0,le=1.0)
+
+
 class WriteApiRequest(BaseModel):
     topic:str=Field(min_length=3)
     output_type:OutputType
-    target_word_count:int=Field(default=800, ge=100,le=10_000)
+    target_word_count:int=Field(default=800, ge=100, le=10_000)
+    evidence:list[WritingEvidenceInput]=Field(min_length=1)
 
 
 class RunApiRequest(BaseModel):

@@ -1,4 +1,9 @@
-from shodak.api.schemas import ResearchApiRequest, RunApiRequest, WriteApiRequest
+from shodak.api.schemas import (
+    ResearchApiRequest,
+    RunApiRequest,
+    WriteApiRequest,
+    WritingEvidenceInput,
+)
 from shodak.models.research import ResearchDepth
 from shodak.models.writing import OutputType
 
@@ -10,7 +15,19 @@ def test_research_api_request_defaults():
 
 
 def test_write_api_request():
-    request=WriteApiRequest(topic="retrieval augmented generation",output_type=OutputType.blog)
+    request=WriteApiRequest(
+        topic="retrieval augmented generation",
+        output_type=OutputType.blog,
+        evidence=[
+            WritingEvidenceInput(
+                claim="Retrieval improves access to external knowledge.",
+                supporting_text="Supporting evidence.",
+                source_title="RAG Paper",
+                source_url="https://example.com/rag",
+                confidence=0.9,
+            )
+        ],
+    )
     assert request.output_type==OutputType.blog
     assert request.target_word_count==800
 

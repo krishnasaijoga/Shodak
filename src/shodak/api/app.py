@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from shodak.api.routes.research import router as research_router
+from shodak.api.routes.write import router as writer_router
 from shodak.config import settings
 
 app=FastAPI(
@@ -10,6 +11,7 @@ app=FastAPI(
 )
 
 app.include_router(research_router)
+app.include_router(writer_router)
 
 @app.get("/")
 def root()->dict[str,str]:
