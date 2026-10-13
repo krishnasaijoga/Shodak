@@ -5,6 +5,7 @@ from shodak.models.synthesis import ResearchSynthesis
 from shodak.models.writing import WritingRequest
 from shodak.style.profile import StyleProfile
 from shodak.writing.llm_writer import generate_draft_with_llm
+from shodak.writing.postprocess import enforce_contradiction_handling
 from shodak.writing.templates import get_writing_template
 
 
@@ -91,24 +92,26 @@ def generate_draft(
         research_synthesis:ResearchSynthesis|None=None
 )->WritingDraft:
     if not report.quality.sufficient_evidence:
-        return generate_draft_deterministic(
+        draft=generate_draft_deterministic(
             report=report,
             request=request,
             style_profile=style_profile,
             style_examples=style_examples
         )
-    try:
-        return generate_draft_with_llm(
-            report=report,
-            request=request,
-            style_profile=style_profile,
-            style_examples=style_examples,
-            research_synthesis=research_synthesis
-        )
-    except Exception: # noqa:BLE001
-        return generate_draft_deterministic(
-            report=report,
-            request=request,
-            style_profile=style_profile,
-            style_examples=style_examples
-        )
+    else:
+        try:
+            draft=generate_draft_with_llm(
+                report=report,
+                request=request,
+                style_profile=style_profile,
+                style_examples=style_examples,
+                research_synthesis=research_synthesis
+            )
+        except Exception: # noqa:BLE001
+            draft=generate_draft_deterministic(
+                report=report,
+                request=request,
+                style_profile=style_profile,
+                style_examples=style_examples
+            )
+    return enforce_contradiction_handling(draft=draft, report=report)
