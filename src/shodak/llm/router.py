@@ -19,9 +19,9 @@ def get_llm_candidates():
             llms.append((provider,llm))
         except (ValueError,RuntimeError):
             continue
-    if not llm:
+    if not llms:
         raise RuntimeError("No configured LLM providers are available.")
-    return llm
+    return llms
 
 
 def invoke_structured_with_fallback(

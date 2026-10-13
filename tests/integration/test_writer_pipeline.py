@@ -1,9 +1,12 @@
+from unittest.mock import patch
+
 from shodak.models.citation import Citation
 from shodak.models.contradiction import Contradiction
 from shodak.models.evidence import Evidence
 from shodak.models.report import ResearchQuality, ResearchReport, ResearchRequest
 from shodak.models.writing import OutputType, WritingRequest
 from shodak.writing.generator import generate_draft
+from shodak.writing.llm_writer import GeneratedDraft, GeneratedSection
 from shodak.writing.renderer import render_markdown
 
 
@@ -61,7 +64,44 @@ def test_writer_pipeline_end_to_end():
         include_citation=True,
         include_references=True
     )
-    draft=generate_draft(report,writing_request)
+
+    with patch(
+        "shodak.writing.llm_writer.invoke_structured_with_fallback",
+        return_value=GeneratedDraft(
+            title="Understanding Retrieval Augmented Generation",
+            sections=[
+                GeneratedSection(
+                    heading="Introduction",
+                    content="Retrieval augmented generation uses external knowledge.",
+                ),
+                GeneratedSection(
+                    heading="Background",
+                    content="Retrieval can provide additional context.",
+                ),
+                GeneratedSection(
+                    heading="Key Findings",
+                    content="Retrieval may improve access to external knowledge.",
+                ),
+                GeneratedSection(
+                    heading="Discussion",
+                    content="Its effectiveness varies across cases.",
+                ),
+                GeneratedSection(
+                    heading="Conflicting Evidence",
+                    content=(
+                        "The available evidence reports different outcomes "
+                        "for retrieval effectiveness."
+                    ),
+                ),
+                GeneratedSection(
+                    heading="Conclusion",
+                    content="The evidence suggests benefits with limitations.",
+                ),
+            ]
+        )
+    ):
+        draft=generate_draft(report,writing_request)
+
     rendered=render_markdown(draft,include_references=writing_request.include_references)
     assert draft.title.lower() =="Understanding Retrieval Augmented Generation".lower()
     headings=[section.heading for section in draft.sections]
