@@ -68,3 +68,17 @@ class WritingApiResponse(BaseModel):
 class RunApiResponse(BaseModel):
     research:ResearchApiResponse
     writing:WritingApiResponse
+
+
+class ProviderStatus(BaseModel):
+    provider:str
+    configured:bool
+
+
+class HealthApiResponse(BaseModel):
+    status:str
+    app_name:str
+    environment:str
+    primary_provider:str
+    fallback_provider:str|None
+    providers:list[ProviderStatus]

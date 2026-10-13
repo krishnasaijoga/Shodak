@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
 from shodak.api.app import app
@@ -14,8 +16,34 @@ def test_root_endpoint():
 
 
 def test_health_endpoint():
-    response=client.get("/health")
+    with (
+        patch(
+            "shodak.api.app.get_health_status",
+            return_value="healthy"
+        ),
+        patch(
+            "shodak.api.app.get_provider_status",
+            return_value=[
+                {
+                    "provider":"groq",
+                    "configured":True
+                },
+                {
+                    "provider":"openai",
+                    "configured":True
+                }
+            ]
+        )
+    ):
+        response=client.get("/health")
     assert response.status_code==200
     data=response.json()
     assert data["status"]=="healthy"
-    assert data["environment"]=="development"
+    assert data["app_name"]=="Shodak"
+    assert "environment" in data
+    assert data["primary_provider"]=="groq"
+    assert len(data["providers"])==2
+    assert data["providers"][0]=={
+        "provider":"groq",
+        "configured":True
+    }

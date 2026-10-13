@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 
+from shodak.api.health import get_health_status, get_provider_status
 from shodak.api.routes.research import router as research_router
 from shodak.api.routes.run import router as run_router
 from shodak.api.routes.write import router as writer_router
+from shodak.api.schemas import HealthApiResponse, ProviderStatus
 from shodak.config import settings
 
 app=FastAPI(
@@ -25,9 +27,16 @@ def root()->dict[str,str]:
     }
 
 
-@app.get("/health")
-def health()->dict[str,str]:
-    return {
-        "status":"healthy",
-        "environment":settings.environment
-    }
+@app.get("/health",response_model=HealthApiResponse)
+def health()->HealthApiResponse:
+    providers=[
+        ProviderStatus(**provider) for provider in get_provider_status()
+    ]
+    return HealthApiResponse(
+        status=get_health_status(),
+        app_name=settings.app_name,
+        environment=settings.environment,
+        primary_provider=settings.llm_provider,
+        fallback_provider=settings.llm_fallback_provider,
+        providers=providers
+    )
