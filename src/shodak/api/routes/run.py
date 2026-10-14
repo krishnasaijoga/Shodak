@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from shodak.api.errors import LlmProviderUnavailableError, WorkflowExecutionError
 from shodak.api.schemas import (
     EvaluationApiResponse,
     EvidenceApiResponse,
@@ -35,13 +36,22 @@ def run_shodak(request:RunApiRequest)->RunApiResponse:
     )
 
     workflow=build_workflow()
-    result=workflow.invoke(
-        {
-            "research_request":research_request,
-            "writing_request":writing_request,
-            "revision_count":0
-        }
-    )
+    try:
+        result=workflow.invoke(
+            {
+                "research_request":research_request,
+                "writing_request":writing_request,
+                "revision_count":0
+            }
+        )
+        if result.get("error"):
+            raise WorkflowExecutionError(message=result["error"])
+    except RuntimeError as exc:
+        message=str(exc)
+
+        if "LLM provider" in message or "configured LLM providers" in message:
+            raise LlmProviderUnavailableError() from exc
+        raise WorkflowExecutionError() from exc
 
     report=result["research_report"]
     draft=result["writing_draft"]

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from shodak.api.errors import LlmProviderUnavailableError, WorkflowExecutionError
 from shodak.api.schemas import EvidenceApiResponse, ResearchApiResponse
 from shodak.models.research import ResearchRequest
 from shodak.research.report import build_research_report
@@ -21,10 +22,15 @@ def research(
         depth=request.depth,
         max_sources=request.max_sources
     )
-
-    report=build_research_report(
-        research_request
-    )
+    try:
+        report=build_research_report(
+            research_request
+        )
+    except RuntimeError as exc:
+        message=str(exc)
+        if "LLM provider" in message or "configured LLM providers" in message:
+            raise LlmProviderUnavailableError() from exc
+        raise WorkflowExecutionError(message="Research could not be completed.") from exc
 
     evidence=[
         EvidenceApiResponse(

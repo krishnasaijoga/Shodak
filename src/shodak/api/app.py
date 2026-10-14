@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
+from shodak.api.errors import ShodakApiError
 from shodak.api.health import get_health_status, get_provider_status
 from shodak.api.routes.research import router as research_router
 from shodak.api.routes.run import router as run_router
@@ -39,4 +41,18 @@ def health()->HealthApiResponse:
         primary_provider=settings.llm_provider,
         fallback_provider=settings.llm_fallback_provider,
         providers=providers
+    )
+
+
+@app.exception_handler(ShodakApiError)
+async def shodak_api_error_handler(
+    request:Request,
+    exc: ShodakApiError
+)->JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error":exc.error,
+            "message":exc.message
+        }
     )

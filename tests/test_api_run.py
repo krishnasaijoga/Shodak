@@ -124,3 +124,67 @@ def test_run_endpoint_rejects_invalid_request():
         }
     )
     assert response.status_code==422
+
+
+def test_run_endpoint_handles_provider_failure():
+    workflow=MagicMock()
+
+    workflow.invoke.side_effect=RuntimeError("All configured LLM providers failed.")
+
+    with patch(
+        "shodak.api.routes.run.build_workflow",
+        return_value=workflow
+    ):
+        response=client.post(
+            "/run",
+            json={
+                "topic":"retrieval augemented generation",
+                "output_type":"blog"
+            }
+        )
+    assert response.status_code==503
+    data=response.json()
+    assert data["error"]=="llm_provider_unavailable"
+
+
+def test_run_endpoint_handles_workflow_failure():
+    workflow=MagicMock()
+
+    workflow.invoke.side_effect=RuntimeError("Unexpected workflow failure.")
+
+    with patch(
+        "shodak.api.routes.run.build_workflow",
+        return_value=workflow
+    ):
+        response=client.post(
+            "/run",
+            json={
+                "topic":"retrieval augmented generation",
+                "output_type":"blog"
+            }
+        )
+    assert response.status_code==500
+    data=response.json()
+    assert data["error"]=="workflow_execution_failed"
+
+
+def test_run_endpoint_handles_graph_error_state():
+    workflow=MagicMock()
+
+    workflow.invoke.return_value={"error":"Research service unavailable."}
+
+    with patch(
+        "shodak.api.routes.run.build_workflow",
+        return_value=workflow
+    ):
+        response=client.post(
+            "/run",
+            json={
+                "topic": "retrieval augmented generation",
+                "output_type": "blog"
+            }
+        )
+    assert response.status_code==500
+    data=response.json()
+    assert data["error"]=="workflow_execution_failed"
+    assert data["message"]=="Research service unavailable."
