@@ -74,3 +74,48 @@ def test_invalid_output_type():
         ]
     ), pytest.raises(SystemExit):
         main()
+
+
+
+def test_run_command_with_output():
+    with (
+        patch(
+            "sys.argv",
+            [
+                "shodak",
+                "run",
+                "retrieval augmented generation",
+                "--output-type",
+                "blog",
+                "--output",
+                "result.md"
+            ]
+        ),
+        patch(
+            "shodak.cli._run_workflow"
+        ) as mock_run
+    ):
+        main()
+    args=mock_run.call_args.args[0]
+    assert args.output=="result.md"
+
+
+def test_research_command_with_output():
+    with (
+        patch(
+            "sys.argv",
+            [
+                "shodak",
+                "research",
+                "retrieval augmented generation",
+                "--output",
+                "research.json"
+            ]
+        ),
+        patch(
+            "shodak.cli._run_research"
+        ) as mock_run
+    ):
+        main()
+    args=mock_run.call_args.args[0]
+    assert args.output=="research.json"

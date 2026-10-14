@@ -3,6 +3,7 @@ import argparse
 from shodak.graph.workflow import build_workflow
 from shodak.models.research import ResearchDepth, ResearchRequest
 from shodak.models.writing import OutputType, WritingRequest
+from shodak.output.exporter import export_output
 from shodak.research.report import build_research_report
 
 
@@ -79,6 +80,26 @@ def _build_parser()->argparse.ArgumentParser:
         default=800
     )
 
+    run_parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help=(
+            "Optional output file. "
+            "Supported formats: .md, .json"
+        )
+    )
+
+    research_parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help=(
+            "Optional research output file."
+            "Supported format: .json"
+        )
+    )
+
     return parser
 
 
@@ -90,6 +111,25 @@ def _run_research(args:argparse.Namespace)->None:
     )
 
     report=build_research_report(request)
+
+    research_data={
+        "topic":report.request.topic,
+        "research_questions":report.research_questions,
+        "source_count":len(report.sources),
+        "evidence_count":len(report.evidence),
+        "coverage_score":report.quality.coverage_score,
+        "sufficient_evidence":report.quality.sufficient_evidence,
+        "evidence":[
+            {
+                "claim":item.claim,
+                "supporting_text":item.supporting_text,
+                "source_title":item.citation.source_title,
+                "source_url":item.citation.source_url,
+                "confidence":item.confidence
+            }
+            for item in report.evidence
+        ]
+    }
 
     print(f"\nTopic: {report.request.topic}")
     print(f"Sources: {len(report.sources)}")
@@ -105,6 +145,16 @@ def _run_research(args:argparse.Namespace)->None:
         print(f"{index}. {evidence.claim}")
         print(f"Source:     {evidence.citation.source_title}")
         print(f"Confidence:     {evidence.confidence:.2f}")
+
+    if args.output:
+        if not args.output.lower().endswith(".json"):
+            raise ValueError("Research export currently supports only .json")
+        path=export_output(
+            output_path=args.output,
+            markdown_content="",
+            json_data=research_data
+        )
+        print(f"\nSaved Research to: {path}")
 
 
 
@@ -131,6 +181,13 @@ def _run_workflow(args:argparse.Namespace)->None:
 
     scorecard=result["evaluation_scorecard"]
 
+    export_data={
+        "topic":research_request.topic,
+        "output_type":writing_request.output_type.value,
+        "content":rendered_output,
+        "evaluation":scorecard.model_dump()
+    }
+
     print("\n")
     print(rendered_output)
 
@@ -142,6 +199,15 @@ def _run_workflow(args:argparse.Namespace)->None:
     print(f"Format compliance: {scorecard.format_compliance_score:.2f}")
     print(f"Research Quality: {scorecard.research_quality_score:.2f}")
     print(f"Overall quality: {scorecard.overall_quality_score:.2f}")
+
+    if args.output:
+        output_path=export_output(
+            output_path=args.output,
+            markdown_content=rendered_output,
+            json_data=export_data
+        )
+
+        print(f"\nSaved output to: {output_path}")
 
 
 
