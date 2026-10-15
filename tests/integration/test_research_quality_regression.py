@@ -45,9 +45,21 @@ def test_research_quality_benchmarks():
             )
         )
     ]
-    with patch(
-        "shodak.research.report.search_academic_sources",
-        return_value=mock_sources
+    with (
+        patch(
+            "shodak.research.report.search_academic_sources",
+            return_value=mock_sources
+        ),
+        patch(
+            "shodak.research.planner.build_research_questions_with_fallback",
+            return_value=[
+                "What is retrieval augmented generation?",
+                "How does retrieval improve access to external knowledge?",
+                "What are the benefits of retrieval augmented generation?",
+                "What are the limitations of retrieval augmented generation?",
+                "How does retrieval quality affect generated answers?"
+            ]
+        )
     ):
         for benchmark in benchmarks:
             report=build_research_report(
