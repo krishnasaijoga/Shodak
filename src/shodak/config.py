@@ -88,5 +88,19 @@ class Settings(BaseModel):
         )
     )
 
+    llm_max_concurrent_requests:int=int(
+        os.getenv(
+            "LLM_MAX_CONCURRENT_REQUESTS",
+            "3"
+        )
+    )
+
+    llm_min_request_interval_seconds:float=float(
+        os.getenv(
+            "LLM_MIN_REQUEST_INTERVAL_SECONDS",
+            "0.0"
+        )
+    )
+
 
 settings=Settings()

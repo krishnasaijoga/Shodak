@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from shodak.config import settings
 from shodak.llm.factory import get_llm_for_provider
+from shodak.llm.rate_limit import get_provider_limiter
 from shodak.llm.retry import run_with_retry
 from shodak.usage import extract_token_usage, usage_tracker
 
@@ -37,10 +38,22 @@ def invoke_structured_with_fallback(
 
     for provider,llm in get_llm_candidates():
         try:
+            limiter=get_provider_limiter(
+                            provider,
+                            max_concurrent=settings.llm_max_concurrent_requests,
+                            min_interval_seconds=settings.llm_min_request_interval_seconds
+                        )
             structured_llm=llm.with_structured_output(schema)
+
+            limiter=get_provider_limiter(provider,max_concurrent=settings.llm_max_concurrent_requests,min_interval_seconds=settings.llm_min_request_interval_seconds)
+
+            def invoke_provider(limiter=limiter,structured_llm=structured_llm):
+                with limiter.acquire():
+                    return structured_llm.invoke(prompt)
+            
             logger.info("llm_provider_attempt | provider=%s",provider)
             result=run_with_retry(
-                operation=lambda structured_llm=structured_llm: structured_llm.invoke(prompt), 
+                operation=invoke_provider, 
                 max_attempts=settings.llm_max_attempts,
                 initial_delay=settings.llm_retry_initial_delay,
                 backoff_multiplier=settings.llm_retry_backoff_multiplier,
