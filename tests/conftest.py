@@ -1,0 +1,10 @@
+import pytest
+
+from shodak.cache import cache
+
+
+@pytest.fixture(autouse=True)
+def clear_shodak_cache():
+    cache.clear()
+    yield
+    cache.clear()

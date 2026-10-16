@@ -47,6 +47,9 @@ def test_research_quality_benchmarks():
     ]
     with (
         patch(
+            "shodak.research.report.settings.cache_enabled",False
+        ),
+        patch(
             "shodak.research.report.search_academic_sources",
             return_value=mock_sources
         ),

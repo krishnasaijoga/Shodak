@@ -1,3 +1,7 @@
+import logging
+
+from shodak.cache import build_cache_key, cache
+from shodak.config import settings
 from shodak.models.report import ResearchReport
 from shodak.models.research import ResearchRequest
 from shodak.research.academic import search_academic_sources
@@ -10,8 +14,10 @@ from shodak.research.planner import build_research_questions_with_fallback
 from shodak.research.quality import evaluate_research_quality
 from shodak.research.ranker import rank_sources
 
+logger=logging.getLogger("shodak.cache")
 
-def build_research_report(request:ResearchRequest)->ResearchReport:
+
+def _build_research_report_uncached(request:ResearchRequest)->ResearchReport:
     questions=build_research_questions_with_fallback(request)
     sources=search_academic_sources(
         query=request.topic,
@@ -34,3 +40,33 @@ def build_research_report(request:ResearchRequest)->ResearchReport:
         contradictions=contradictions,
         quality=quality
     )
+
+
+def build_research_report(
+        request:ResearchRequest
+)->ResearchReport:
+    if not settings.cache_enabled:
+        return _build_research_report_uncached(request)
+
+    key=build_cache_key(
+        namespace="research_report",
+        payload=request.model_dump(mode="json")
+    )
+
+    cached=cache.get(key)
+
+    if cached is not None:
+        logger.info("cache_hit | namespace=research_report")
+        return cached
+
+    logger.info("cache_miss | namespace=research_report")
+
+    report=_build_research_report_uncached(request)
+
+    cache.set(
+        key=key,
+        value=report,
+        ttl_seconds=settings.research_cache_ttl_seconds
+    )
+    
+    return report
