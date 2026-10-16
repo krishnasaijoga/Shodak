@@ -1,3 +1,4 @@
+import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -63,3 +64,19 @@ def test_retryable_error_exhausts_attempts():
             max_attempts=3
         )
     assert operation.call_count==3
+
+
+def test_retry_is_logged(caplog):
+    operation=MagicMock()
+
+    operation.side_effect=[RuntimeError("429 Too Many Requests"),"success"]
+
+    with (
+        caplog.at_level(logging.WARNING,logger="shodak.llm.retry"),
+        patch("shodak.llm.retry.time.sleep")
+    ):
+        result=run_with_retry(operation=operation,max_attempts=2)
+
+    assert result=="success"
+
+    assert any("retrying_operation" in record.message for record in caplog.records)

@@ -47,3 +47,9 @@ def test_health_endpoint():
         "provider":"groq",
         "configured":True
     }
+
+
+def test_response_contains_request_id():
+    response=client.get("/")
+    assert response.status_code==200
+    assert "X-Request-ID" in response.headers

@@ -1,5 +1,9 @@
+import logging
 import time
 from collections.abc import Callable
+
+logger=logging.getLogger("shodak.llm.retry")
+
 
 RETRYABLE_MESSAGES={
     "429",
@@ -37,6 +41,13 @@ def run_with_retry[T](
             last_error=exc
             if not is_retryable_error(exc) or attempt==max_attempts:
                 raise
-        time.sleep(delay)
-        delay*=backoff_multiplier
+            logger.warning(
+                "retrying_operation | attempt=%s | max_attempts=%s | delay=%.2f | error_type=%s",
+                attempt,
+                max_attempts,
+                delay,
+                type(exc).__name__
+            )
+            time.sleep(delay)
+            delay*=backoff_multiplier
     raise RuntimeError("Retry operation failed unexpectedly.") from last_error

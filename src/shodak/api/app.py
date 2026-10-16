@@ -1,3 +1,7 @@
+import logging
+import time
+from uuid import uuid4
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -9,6 +13,8 @@ from shodak.api.routes.write import router as writer_router
 from shodak.api.schemas import HealthApiResponse, ProviderStatus
 from shodak.config import settings
 
+api_logger=logging.getLogger("shodak.api")
+
 app=FastAPI(
     title="Shodak API",
     description="Research and Writing API powered by Shodak's multi-agent workflow.",
@@ -19,6 +25,37 @@ app=FastAPI(
 app.include_router(research_router)
 app.include_router(writer_router)
 app.include_router(run_router)
+
+
+@app.middleware("http")
+async def request_logging_middleware(
+    request:Request,
+    call_next
+):
+    request_id=str(uuid4())
+    start=time.perf_counter()
+
+    api_logger.info(
+        "request_started | request_id=%s | method=%s | path=%s",
+        request_id,
+        request.method,
+        request.url.path
+    )
+
+    response=await call_next(request)
+
+    duration=time.perf_counter() - start
+
+    api_logger.info(
+        "request_completed | request_id=%s | status=%s | duration=%.3f",
+        request_id,
+        response.status_code,
+        duration
+    )
+
+    response.headers["X-Request-ID"]=request_id
+
+    return response
 
 
 @app.get("/")
