@@ -27,7 +27,8 @@ def run_with_retry[T](
         operation:Callable[[],T],
         max_attempts:int=3,
         initial_delay:float=0.5,
-        backoff_multiplier:float=2.0
+        backoff_multiplier:float=2.0,
+        on_retry:Callable[[],None]|None=None
 )->T:
     if max_attempts<1:
         raise ValueError("max_attempts must be at least 1.")
@@ -48,6 +49,8 @@ def run_with_retry[T](
                 delay,
                 type(exc).__name__
             )
+            if on_retry is not None:
+                on_retry()
             time.sleep(delay)
             delay*=backoff_multiplier
     raise RuntimeError("Retry operation failed unexpectedly.") from last_error

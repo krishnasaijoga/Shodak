@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from shodak.config import settings
 from shodak.llm.factory import get_llm_for_provider
 from shodak.llm.retry import run_with_retry
+from shodak.usage import extract_token_usage, usage_tracker
 
 logger=logging.getLogger("shodak.llm.router")
 
@@ -42,10 +43,19 @@ def invoke_structured_with_fallback(
                 operation=lambda structured_llm=structured_llm: structured_llm.invoke(prompt), 
                 max_attempts=settings.llm_max_attempts,
                 initial_delay=settings.llm_retry_initial_delay,
-                backoff_multiplier=settings.llm_retry_backoff_multiplier
+                backoff_multiplier=settings.llm_retry_backoff_multiplier,
+                on_retry=lambda provider=provider: usage_tracker.record_retry(provider)
             )
 
-            logger.info("llm_provider_success | provider=%s",provider)
+            prompt_tokens,completion_tokens=extract_token_usage(result)
+
+            usage_tracker.record_call(
+                provider=provider,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens
+            )
+
+            logger.info("llm_provider_success | provider=%s | prompt_tokens=%s | completion_tokens=%s",provider,prompt_tokens,completion_tokens)
 
             return result
         except Exception as exc: # noqa BLE001

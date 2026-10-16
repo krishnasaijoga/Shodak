@@ -80,3 +80,20 @@ def test_retry_is_logged(caplog):
     assert result=="success"
 
     assert any("retrying_operation" in record.message for record in caplog.records)
+
+
+def test_retry_callback_is_called():
+    operation=MagicMock()
+    on_retry=MagicMock()
+
+    operation.side_effect=[RuntimeError("429 Too Many Requests"),"success"]
+
+    with patch("shodak.llm.retry.time.sleep"):
+        result=run_with_retry(
+            operation=operation,
+            max_attempts=2,
+            on_retry=on_retry
+        )
+
+    assert result=="success"
+    on_retry.assert_called_once()
