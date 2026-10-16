@@ -84,3 +84,36 @@ def test_all_proiders_fail():
             assert "All configured LLM providers failed" in str(exc)
         else:
             raise AssertionError("Expected RuntimeError")
+
+
+def test_primary_provider_retries_before_fallback():
+    primary_llm=MagicMock()
+    fallback_llm=MagicMock()
+
+    primary_structured=MagicMock()
+
+    primary_structured.invoke.side_effect=[RuntimeError("429 Too Many Requests"),ExampleOutput(value="primary-recovered")]
+
+    primary_llm.with_structured_output.return_value=primary_structured
+
+    with (
+        patch(
+            "shodak.llm.router.get_llm_candidates",
+            return_value=[
+                ("groq",primary_llm),
+                ("openai",fallback_llm)
+            ]
+        ),
+        patch(
+            "shodak.llm.retry.time.sleep"
+        )
+    ):
+        result=invoke_structured_with_fallback(
+            schema=ExampleOutput,
+            prompt="Test"
+        )
+
+    assert result.value=="primary-recovered"
+    assert primary_structured.invoke.call_count==2
+
+    fallback_llm.with_structured_output.assert_not_called()

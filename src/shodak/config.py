@@ -45,6 +45,24 @@ class Settings(BaseModel):
         "LLM_FALLBACK_PROVIDER",
         "openai"
     )
+    llm_max_attempts:int=int(
+        os.getenv(
+            "LLM_MAX_ATTEMPTS",
+            "3"
+        )
+    )
+    llm_retry_initial_delay:float=float(
+        os.getenv(
+            "LLM_RETRY_INITIAL_DELAY",
+            "0.5"
+        )
+    )
+    llm_retry_backoff_multiplier:float=float(
+        os.getenv(
+            "LLM_RETRY_BACKOFF_MULTIPLIER",
+            "2.0"
+        )
+    )
 
 
 settings=Settings()
