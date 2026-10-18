@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 BASE_DIR=Path(__file__).resolve().parents[2]  # to get base directory of the project
 ENV_FILE=BASE_DIR/".env"
@@ -110,6 +110,38 @@ class Settings(BaseModel):
         "RUN_HISTORY_PATH",
         "data/run_history.jsonl"
     )
+    @model_validator(mode="after")
+    def validate_settings(self):
+        valid_providers={
+            "groq",
+            "openai"
+        }
+
+        if self.llm_provider not in valid_providers:
+            raise ValueError(f"Unsupported LLM provider: {self.llm_provider}")
+
+        if (self.llm_fallback_provider and self.llm_fallback_provider not in valid_providers):
+            raise ValueError(f"Unsupported fallback LLM provider: {self.llm_fallback_provider}")
+
+        if self.llm_max_attempts<1:
+            raise ValueError("llm_max_attempts must be at least 1.")
+
+        if self.llm_retry_initial_delay<0:
+            raise ValueError("llm_retry_initial_delay cannot be neagtive.")
+
+        if self.llm_retry_backoff_multiplier<1:
+            raise ValueError("llm_retry_backoff_multiplier must be atleast 1.")
+
+        if self.llm_max_concurrent_requests<1:
+            raise ValueError("llm_max_concurrent_requests must be atleast 1.")
+
+        if self.llm_min_request_interval_seconds<0:
+            raise ValueError("llm_min_request_interval_seconds cannot be negative.")
+
+        if self.research_cache_ttl_seconds<1:
+            raise ValueError("research_cache_ttl_seconds must be atleast 1.")
+
+        return self
 
 
 settings=Settings()

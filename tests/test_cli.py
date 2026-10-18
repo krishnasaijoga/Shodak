@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from shodak.cli import main
+from shodak.startup import StartupCheckResult
 
 
 def test_research_command():
@@ -119,3 +120,51 @@ def test_research_command_with_output():
         main()
     args=mock_run.call_args.args[0]
     assert args.output=="research.json"
+
+
+def test_cli_check_success(
+        monkeypatch,
+        capsys
+):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "shodak",
+            "check"
+        ]
+    )
+
+    with patch(
+        "shodak.cli.run_startup_checks",
+        return_value=StartupCheckResult(
+            healthy=True
+        )
+    ):
+        main()
+
+    output=capsys.readouterr().out
+
+    assert "healthy" in output
+
+
+def test_cli_check_failure(
+        monkeypatch
+):
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "shodak",
+            "check"
+        ]
+    )
+
+    with patch(
+        "shodak.cli.run_startup_checks",
+        return_value=StartupCheckResult(
+            healthy=False,
+            errors=["No LLM provider API key is configured."]
+        )
+    ), pytest.raises(SystemExit) as exc:
+        main()
+    
+    assert exc.value.code==1

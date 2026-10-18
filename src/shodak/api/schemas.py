@@ -82,6 +82,8 @@ class HealthApiResponse(BaseModel):
     primary_provider:str
     fallback_provider:str|None
     providers:list[ProviderStatus]
+    startup_errors:list[str]=[]
+    startup_warnings:list[str]=[]
 
 
 class ErrorApiResponse(BaseModel):

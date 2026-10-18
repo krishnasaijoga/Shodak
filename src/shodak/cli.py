@@ -7,6 +7,7 @@ from shodak.output.exporter import export_output
 from shodak.persistence import persist_completed_run
 from shodak.research.report import build_research_report
 from shodak.security import validate_output_path
+from shodak.startup import run_startup_checks
 
 
 def _build_parser()->argparse.ArgumentParser:
@@ -100,6 +101,11 @@ def _build_parser()->argparse.ArgumentParser:
             "Optional research output file."
             "Supported format: .json"
         )
+    )
+
+    subparsers.add_parser(
+        "check",
+        help="Validate Shodak configuration."
     )
 
     return parser
@@ -224,6 +230,22 @@ def _run_workflow(args:argparse.Namespace)->None:
         print(f"\nSaved output to: {output_path}")
 
 
+def _run_check()->None:
+    result=run_startup_checks()
+
+    print("Configuration status: ",
+           "healthy" if result.healthy else "degraded")
+
+    for warning in result.warnings:
+        print(f"WARNING: {warning}")
+
+    for error in result.errors:
+        print(f"ERROR: {error}")
+
+    if not result.healthy:
+        raise SystemExit(1)
+
+
 
 def main()->None:
     parser=_build_parser()
@@ -233,6 +255,9 @@ def main()->None:
         _run_research(args)
     elif args.command=="run":
         _run_workflow(args)
+    elif args.command=="check":
+        _run_check()
+        return
 
 
 if __name__=="__main__":
