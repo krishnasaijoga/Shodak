@@ -4,6 +4,7 @@ from shodak.graph.workflow import build_workflow
 from shodak.models.research import ResearchDepth, ResearchRequest
 from shodak.models.writing import OutputType, WritingRequest
 from shodak.output.exporter import export_output
+from shodak.persistence import persist_completed_run
 from shodak.research.report import build_research_report
 
 
@@ -180,6 +181,17 @@ def _run_workflow(args:argparse.Namespace)->None:
     rendered_output=result["rendered_output"]
 
     scorecard=result["evaluation_scorecard"]
+
+    evaluation_data=(
+        scorecard.model_dump(mode="json") if scorecard is not None else None
+    )
+
+    persist_completed_run(
+        topic=args.topic,
+        output_type=args.output_type,
+        rendered_output=rendered_output,
+        evaluation=evaluation_data
+    )
 
     export_data={
         "topic":research_request.topic,

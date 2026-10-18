@@ -102,5 +102,14 @@ class Settings(BaseModel):
         )
     )
 
+    run_history_enabled:bool=(
+        os.getenv("RUN_HISTORY_ENABLED","true").lower()=="true"
+    )
+
+    run_history_path:str=os.getenv(
+        "RUN_HISTORY_PATH",
+        "data/run_history.jsonl"
+    )
+
 
 settings=Settings()

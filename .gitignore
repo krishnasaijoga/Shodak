@@ -33,3 +33,6 @@ logs/
 
 # Miscellaneous
 learning.txt
+
+# run_hostory
+data/run_history.jsonl
