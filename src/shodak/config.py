@@ -110,6 +110,28 @@ class Settings(BaseModel):
         "RUN_HISTORY_PATH",
         "data/run_history.jsonl"
     )
+
+    research_max_attempts:int=int(
+        os.getenv(
+            "RESEARCH_MAX_ATTEMPTS",
+            "3"
+        )
+    )
+
+    research_retry_inital_delay:float=float(
+        os.getenv(
+            "RESEARCH_RETRY_INITIAL_DELAY",
+            "1.0"
+        )
+    )
+
+    research_retry_backoff_multiplier:float=float(
+        os.getenv(
+            "RESEARCH_RETRY_BACKOFF_MULTIPLIER",
+            "2.0"
+        )
+    )
+
     @model_validator(mode="after")
     def validate_settings(self):
         valid_providers={

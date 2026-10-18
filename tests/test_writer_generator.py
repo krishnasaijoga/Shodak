@@ -160,9 +160,16 @@ def test_writer_handles_insufficient_evidence():
     )
     request=WritingRequest(output_type=OutputType.blog)
     draft=generate_draft_deterministic(report,request)
-    assert len(draft.sections)==1
-    assert draft.sections[0].heading=="Research Limitation"
-    assert "insufficient" in draft.sections[0].content.lower()
+    assert len(draft.sections)==5
+    headings=[section.heading for section in draft.sections]
+    assert headings==[
+        "Introduction",
+        "Background",
+        "Key Findings",
+        "Discussion",
+        "Conclusion"
+    ]
+    assert all(section.citations==[] for section in draft.sections)
 
 
 def test_writer_surfaces_conflicting_evidence():

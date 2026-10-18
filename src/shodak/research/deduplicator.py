@@ -18,8 +18,9 @@ def deduplicate_sources(sources:list[Source])->list[Source]:
             if doi in seen_dois:
                 continue
             seen_dois.add(doi)
-        if normalized_title in seen_titles:
-            continue
-        seen_titles.add(normalized_title)
+        else:
+            if normalized_title in seen_titles:
+                continue
+            seen_titles.add(normalized_title)
         unique_sources.append(source)
     return unique_sources

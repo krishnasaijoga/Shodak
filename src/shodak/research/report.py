@@ -23,12 +23,36 @@ def _build_research_report_uncached(request:ResearchRequest)->ResearchReport:
         query=request.topic,
         limit=request.max_sources
     )
+
+    print("RAW SOURCES:",len(sources))
+
+    print("\nRAW SOURCE DETAILS")
+
+    for index, source in enumerate(sources):
+        print(
+            index,
+            "| title=",
+            source.title,
+            "| doi=",
+            source.doi,
+            "| url=",
+            source.url,
+        )
+
     unique_sources=deduplicate_sources(sources)
+
+    print("FINAL SOURCES:",len(unique_sources))
+
     ranked_sources=rank_sources(unique_sources)
+
+    print("RANKED SOURCES:",ranked_sources)
     evidence=[]
     for source in ranked_sources:
         evidence.extend(extract_evidence(source))
     evidence=deduplicate_evidence(evidence)
+
+    print("EVIDENCE COUNT:",len(evidence))
+
     coverage_score=calculate_research_coverage(questions,evidence)
     contradictions=detect_contradictions_with_fallback(evidence)
     quality=evaluate_research_quality(ranked_sources,evidence,coverage_score=coverage_score)

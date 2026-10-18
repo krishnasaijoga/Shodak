@@ -1,5 +1,6 @@
 import httpx
 
+from shodak.config import settings
 from shodak.models.source import Source, SourceProvider, SourceType
 from shodak.research.exceptions import (
     ResearchConnectionError,
@@ -7,6 +8,7 @@ from shodak.research.exceptions import (
     ResearchRateLimitError,
 )
 from shodak.research.normalizer import normalize_source
+from shodak.research.retry import run_research_with_retry
 
 SEMANTIC_SCHOLAR_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 CROSSREF_URL = "https://api.crossref.org/works"
@@ -85,6 +87,8 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
         if not titles:
             continue
 
+        title=titles[0] if titles else "untitled"
+
         doi=item.get("DOI")
 
         if not doi:
@@ -112,7 +116,7 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
         sources.append(
             normalize_source(
                 Source(
-                    title="titles[0]",
+                    title=title,
                     url=f"https://doi.org/{doi}",
                     source_type=SourceType.academic,
                     authors=authors,
@@ -128,9 +132,23 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
 
 def search_academic_sources(query:str,limit:int=5)->list[Source]:
     try:
-        results=search_semantic_scholar(query,limit)
+        results=run_research_with_retry(
+            operation=lambda: (
+                search_semantic_scholar(
+                    query=query,
+                    limit=limit
+                )
+            ),
+            max_attempts=settings.research_max_attempts,
+            initial_delay=settings.research_retry_inital_delay,
+            backoff_multiplier=settings.research_retry_backoff_multiplier
+        )
         if results:
             return results
-    except ResearchProviderError:
+    except (
+        ResearchProviderError,
+        ResearchRateLimitError,
+        ResearchConnectionError
+    ):
         pass
     return search_crossref(query,limit)

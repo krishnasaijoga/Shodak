@@ -35,6 +35,32 @@ def _build_contradiction_summary(report:ResearchReport)->str|None:
     return " ".join(summaries)
 
 
+def _build_insufficient_evidence_content(
+        heading:str,
+        topic:str
+):
+    content_by_heading={
+        "Introduction":f"This draft examines {topic}. However, the current research run did not retrieve enough reliable evidence to support a fully grounded discussion.",
+        "Background":"The available source set is too limited to construct a reliable background synthesis.",
+        "Key Findings":"No sufficiently supported findings were identified from the retrieved evidence.",
+        "Discussion":"A meaningful discussion would require a broader and better-supported evidence base.",
+        "Conclusion":"Further research is required before drawing strong conclusion on this topic.",
+        "Evidence review":"The retrieved evidence is insifficient for a reliable evidence review.",
+        "Critical Discussion":"Critical comparision is limited because the current research run produced too little usable evidence.",
+        "Limitations":"The primary limitation is insufficient source coverage and supporting evidence.",
+        "Literature Review":"The literature retrieved in this is insufficient for a substantive literature review.",
+        "Evidence Synthesis":"A robust evidence synthesis cannot be produced from the current evidence set.",
+        "Research Gap":"The immediate research gap is insuffcient retrieved and validated evidence on the topic.",
+        "Hook":f"{topic} deserves careful analysis, but this research run did not retrieve evidence to support strong claims.",
+        "Context":"The current evidence base is too limited for a fully grounded summary.",
+        "Key Insight":"The strongest conclusion from this research run is that additional reliable evidence was retrieved.",
+        "Takeaway":"A broader research pass is needed before making strong claims."
+    }
+    return content_by_heading.get(
+                heading,
+                "The available research evidence is currently insufficient to support this section."
+            )
+
 def generate_draft_deterministic(
         report:ResearchReport,
         request:WritingRequest,
@@ -45,17 +71,22 @@ def generate_draft_deterministic(
     title=request.title or report.request.topic.title()
 
     if not report.quality.sufficient_evidence:
-        warning="The available research evidence is currently insufficient to produce a fully supported draft."
+        sections=[
+            DraftSection(
+                heading=heading,
+                content=_build_insufficient_evidence_content(
+                    heading=heading,
+                    topic=title
+                ),
+                citations=[]
+            )
+            for heading in template
+        ]
+
         return WritingDraft(
             output_type=request.output_type,
             title=title,
-            sections=[
-                DraftSection(
-                    heading="Research Limitation",
-                    content=warning,
-                    citations=[]
-                )
-            ]
+            sections=sections
         )
 
     evidence_summary=_build_evidence_summary(report)
