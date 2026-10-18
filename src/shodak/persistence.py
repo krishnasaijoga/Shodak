@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -7,6 +8,8 @@ from pydantic import BaseModel, Field
 
 from shodak.config import settings
 from shodak.usage import get_usage_summary
+
+logger=logging.getLogger("shodak.persistence")
 
 
 class RunRecord(BaseModel):
@@ -70,3 +73,22 @@ def persist_completed_run(
     store.append(record)
 
     return record
+
+
+def try_persist_completed_run(
+        *,
+        topic:str,
+        output_type:str,
+        rendered_output:str,
+        evaluation:dict|None
+)->RunRecord|None:
+    try:
+        return persist_completed_run(
+            topic=topic,
+            output_type=output_type,
+            rendered_output=rendered_output,
+            evaluation=evaluation
+        )
+    except Exception as exc:    #noqa: BLE001
+        logger.warning("run_persistence_failed | error_type=%s",type(exc).__name__)
+    return None

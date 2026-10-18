@@ -15,6 +15,8 @@ def route_after_evaluation(
 )->str:
     scorecard=state["evaluation_scorecard"]
     revision_count=state.get("revision_count",0)
+    if scorecard is None:
+        return "render"
     if should_revise(scorecard) and revision_count<=MAX_REVISIONS:
         return "revise"
     return "render"

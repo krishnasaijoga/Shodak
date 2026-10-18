@@ -12,7 +12,7 @@ from shodak.api.schemas import (
 from shodak.graph.workflow import build_workflow
 from shodak.models.research import ResearchRequest
 from shodak.models.writing import WritingRequest
-from shodak.persistence import persist_completed_run
+from shodak.persistence import try_persist_completed_run
 
 router=APIRouter(
     prefix="/run",
@@ -90,7 +90,7 @@ def run_shodak(request:RunApiRequest)->RunApiResponse:
 
     evaluation_data=(scorecard.model_dump(mode="json") if scorecard is not None else None)
 
-    persist_completed_run(
+    try_persist_completed_run(
         topic=request.topic,
         output_type=request.output_type.value,
         rendered_output=rendered_output,

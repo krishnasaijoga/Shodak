@@ -1,4 +1,4 @@
-from shodak.graph.routing import route_after_research
+from shodak.graph.routing import route_after_evaluation, route_after_research
 from shodak.graph.state import ShodakState
 from shodak.research.quality import ResearchQuality
 from shodak.research.report import ResearchReport, ResearchRequest
@@ -24,3 +24,12 @@ def test_route_after_research():
         "research_report":report
     }
     assert route_after_research(state)=="writer"
+
+
+def test_missing_scorecard_routes_to_render():
+    state={
+        "evaluation_scorecard":None,
+        "revision_count":0
+    }
+    result=route_after_evaluation(state)
+    assert result=="render"

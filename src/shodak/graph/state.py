@@ -20,6 +20,7 @@ class ShodakState(TypedDict, total=False):
     style_document_type:StyleDocumentType
     style_profile:StyleProfile|None
     style_examples:list[str]
-    research_synthesis:ResearchSynthesis
-    evaluation_scorecard:EvaluationScorecard
+    research_synthesis:ResearchSynthesis | None
+    evaluation_scorecard:EvaluationScorecard | None
+    evaluation_error:str|None
     revision_count:int

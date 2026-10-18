@@ -1,6 +1,11 @@
 from unittest.mock import patch
 
-from shodak.persistence import RunHistoryStore, RunRecord, persist_completed_run
+from shodak.persistence import (
+    RunHistoryStore,
+    RunRecord,
+    persist_completed_run,
+    try_persist_completed_run,
+)
 
 
 def test_run_history_append_and_load(tmp_path):
@@ -117,3 +122,18 @@ def test_persistence_can_be_disabled(tmp_path):
 
     assert record is None
     assert history_path.exists() is False
+
+
+def test_persistence_failure_is_recoverable():
+    with patch(
+        "shodak.persistence.persist_completed_run",
+        side_effect=OSError("Disk unavailable")
+    ):
+        result=try_persist_completed_run(
+            topic="RAG",
+            output_type="blog",
+            rendered_output="# Output",
+            evaluation=None
+        )
+
+    assert result is None

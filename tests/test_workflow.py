@@ -55,6 +55,10 @@ def test_workflow_runs_end_to_end():
         patch(
             "shodak.graph.routing.should_revise",
             return_value=False
+        ),
+        patch(
+            "shodak.graph.nodes.evaluate_output",
+            side_effect=RuntimeError("Evaluator Failed")
         )
     ):
         workflow=build_workflow()
@@ -69,3 +73,7 @@ def test_workflow_runs_end_to_end():
     assert "writing_draft" in result
     assert "rendered_output" in result
     assert result["rendered_output"]=="# AI agents in healthcare"
+    
+    assert result["rendered_output"]
+    assert result["evaluation_scorecard"] is None
+    assert result["evaluation_error"]=="RuntimeError"

@@ -1,6 +1,7 @@
 from shodak.evaluation.scorecard import evaluate_output
 from shodak.graph.state import ShodakState
 from shodak.observability import log_operation
+from shodak.recovery import run_optional
 from shodak.research.report import build_research_report
 from shodak.research.synthesis import synthesize_research_with_fallback
 from shodak.writing.generator import generate_draft
@@ -28,7 +29,7 @@ def writer_node(state:ShodakState)->ShodakState:
         draft=generate_draft(
             report=report,
             request=request,
-            style_profile=state.get("style_profile"),
+            style_profile=state.get("style_rpofile"),
             style_examples=state.get("style_examples",[]),
             research_synthesis=state.get("research_synthesis")
         )
@@ -53,11 +54,11 @@ def renderer_node(state:ShodakState)->ShodakState:
 
 
 def synthesis_node(state:ShodakState)->ShodakState:
-    with log_operation(
-        "synthesis_node"
-    ):
-        report=state["research_report"]
-        synthesis=synthesize_research_with_fallback(report)
+    synthesis=run_optional(
+        lambda: synthesize_research_with_fallback(state["research_report"]),
+        operation_name="research_synthesis",
+        fallback=None
+    )
     return {
         "research_synthesis":synthesis
     }
@@ -66,19 +67,26 @@ def synthesis_node(state:ShodakState)->ShodakState:
 def evaluator_node(
     state:ShodakState
 )->ShodakState:
-    with log_operation("evaluator_node"):
-        draft=state["writing_draft"]
-        report=state["research_report"]
+    try:
+        with log_operation("evaluator_node"):
+            draft=state["writing_draft"]
+            report=state["research_report"]
 
-        scorecard=evaluate_output(
-            draft=draft,
-            report=report,
-            style_profile=state.get("style_profile")
-        )
+            scorecard=evaluate_output(
+                draft=draft,
+                report=report,
+                style_profile=state.get("style_profile")
+            )
 
-    return {
-        "evaluation_scorecard":scorecard
-    }
+        return {
+            "evaluation_scorecard":scorecard,
+            "evaluation_error":None
+        }
+    except Exception as exc:    #noqa: BLE001
+        return {
+            "evaluation_scorecard":None,
+            "evaluation_error":type(exc).__name__
+        }
 
 
 def revision_node(
