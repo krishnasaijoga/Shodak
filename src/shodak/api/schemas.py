@@ -5,15 +5,15 @@ from shodak.models.writing import OutputType
 
 
 class ResearchApiRequest(BaseModel):
-    topic:str=Field(min_length=3)
+    topic:str=Field(min_length=3,max_length=500)
     depth:ResearchDepth=ResearchDepth.standard
     max_sources:int=Field(default=10,ge=1,le=50)
 
 
 class WritingEvidenceInput(BaseModel):
-    claim:str
-    supporting_text:str
-    source_title:str
+    claim:str=Field(min_length=1,max_length=5_000)
+    supporting_text:str=Field(min_length=1,max_length=10_000)
+    source_title:str=Field(min_length=1,max_length=500)
     source_url:str
     confidence:float=Field(ge=0.0,le=1.0)
 
@@ -26,7 +26,7 @@ class WriteApiRequest(BaseModel):
 
 
 class RunApiRequest(BaseModel):
-    topic:str=Field(min_length=3)
+    topic:str=Field(min_length=3,max_length=500)
     output_type:OutputType
     depth:ResearchDepth=ResearchDepth.standard
     max_sources:int=Field(default=10,ge=1,le=50)

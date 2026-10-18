@@ -65,7 +65,7 @@ def persist_completed_run(
         evaluation=evaluation,
         usage=get_usage_summary()
     )
-    store=RunHistoryStore(Path(settings.run_history_path))
+    store=RunHistoryStore(Path(settings.run_history_path).expanduser())
 
     store.append(record)
 

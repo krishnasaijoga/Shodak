@@ -6,6 +6,7 @@ from shodak.models.writing import OutputType, WritingRequest
 from shodak.output.exporter import export_output
 from shodak.persistence import persist_completed_run
 from shodak.research.report import build_research_report
+from shodak.security import validate_output_path
 
 
 def _build_parser()->argparse.ArgumentParser:
@@ -213,8 +214,9 @@ def _run_workflow(args:argparse.Namespace)->None:
     print(f"Overall quality: {scorecard.overall_quality_score:.2f}")
 
     if args.output:
+        output_path=validate_output_path(args.output)
         output_path=export_output(
-            output_path=args.output,
+            output_path=output_path,
             markdown_content=rendered_output,
             json_data=export_data
         )

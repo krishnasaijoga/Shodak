@@ -5,6 +5,7 @@ from shodak.models.draft import DraftSection, WritingDraft
 from shodak.models.report import ResearchReport
 from shodak.models.synthesis import ResearchSynthesis
 from shodak.models.writing import WritingRequest
+from shodak.prompts.security import UNTRUSTED_CONTENT_INSTRUCTION
 from shodak.style.profile import StyleProfile
 from shodak.writing.citation_grounding import find_relevant_citations
 from shodak.writing.templates import get_writing_template
@@ -65,7 +66,9 @@ def generate_draft_with_llm(
         synthesis_contradictions_text="No synthesized contradiction available."
 
     prompt=f"""
-You are the writing afent for Shodak.
+You are the writing agent for Shodak.
+
+{UNTRUSTED_CONTENT_INSTRUCTION}
 
 Write a {request.output_type.value} based strictly on the supplied research.
 

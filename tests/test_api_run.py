@@ -188,3 +188,32 @@ def test_run_endpoint_handles_graph_error_state():
     data=response.json()
     assert data["error"]=="workflow_execution_failed"
     assert data["message"]=="Research service unavailable."
+
+
+def test_run_rejects_excessively_long_topic():
+    response=client.post(
+        "/run",
+        json={
+            "topic": "a" * 501,
+            "output_type": "blog",
+            "depth": "standard",
+            "max_sources": 10,
+            "target_word_count": 800
+        }
+    )
+
+    assert response.status_code==422
+
+
+def test_run_rejects_excessive_word_count():
+    response=client.post(
+        "/run",
+        json={
+            "topic": "retrieval augmented generation",
+            "output_type": "blog",
+            "depth": "standard",
+            "max_sources": 10,
+            "target_word_count": 100_000
+        }
+    )
+    assert response.status_code==422
