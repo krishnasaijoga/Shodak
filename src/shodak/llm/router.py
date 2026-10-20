@@ -43,7 +43,7 @@ def invoke_structured_with_fallback(
                             max_concurrent=settings.llm_max_concurrent_requests,
                             min_interval_seconds=settings.llm_min_request_interval_seconds
                         )
-            structured_llm=llm.with_structured_output(schema)
+            structured_llm=llm.with_structured_output(schema, method="json_schema")
 
             limiter=get_provider_limiter(provider,max_concurrent=settings.llm_max_concurrent_requests,min_interval_seconds=settings.llm_min_request_interval_seconds)
 
@@ -73,5 +73,5 @@ def invoke_structured_with_fallback(
             return result
         except Exception as exc: # noqa BLE001
             last_error=exc
-            logger.warning("llm_provider_failed | provider=%s | error_type=%s", provider,type(exc).__name__)
+            logger.warning("llm_provider_failed | provider=%s | error_type=%s | error=%s", provider,type(exc).__name__, str(exc))
     raise RuntimeError("All configured LLM providers failed.") from last_error

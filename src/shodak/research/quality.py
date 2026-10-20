@@ -10,6 +10,7 @@ def evaluate_research_quality(
 )->ResearchQuality:
     source_count=len(sources)
     evidence_count=len(evidence)
+
     if source_count<2:
         return ResearchQuality(
             sufficient_evidence=False,
@@ -18,6 +19,7 @@ def evaluate_research_quality(
             coverage_score=coverage_score,
             reason="Too few sources were found."
         )
+    
     if evidence_count<2:
         return ResearchQuality(
             sufficient_evidence=False,
@@ -26,6 +28,16 @@ def evaluate_research_quality(
             coverage_score=coverage_score,
             reason="Too few supporting evidences were extracted."
         )
+
+    if coverage_score<0.3:
+        return ResearchQuality(
+            sufficient_evidence=False,
+            source_count=source_count,
+            evidence_count=evidence_count,
+            coverage_score=coverage_score,
+            reason="Research question coverage is too low."
+        )
+    
     return ResearchQuality(
         sufficient_evidence=True,
         source_count=source_count,

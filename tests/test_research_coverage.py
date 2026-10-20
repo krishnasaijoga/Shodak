@@ -52,3 +52,26 @@ def test_coverage_score():
     ]
     score=calculate_research_coverage(questions,evidence)
     assert score==0.5
+
+
+
+def test_generic_machine_learning_words_do_not_count_as_coverage():
+    question="What regulatory frameworks govern machine learning in high-risk domains?"
+
+    evidence=[
+        make_evidence(
+            "Classic machine learning algorithms include support vector classifiers."
+        )
+    ]
+
+    assert question_is_covered(question,evidence) is False
+
+
+def test_relevant_evidence_covers_question():
+    question="What classic algorithms are used for classification?"
+    evidence=[
+        make_evidence(
+            "Support vector classifiers and random forest classifiers are classic algorithms."
+        )
+    ]
+    assert question_is_covered(question,evidence) is True

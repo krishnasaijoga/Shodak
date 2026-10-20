@@ -30,7 +30,7 @@ def enrich_source(source:Source)->Source:
         ResearchRateLimitError,
         ResearchConnectionError
     )as exc:
-        print("SEMANTIC SCHOLAR ENRICHEMENT FAILED: ",source.doi,type(exc).__name__)
+        print("SEMANTIC SCHOLAR ENRICHMENT FAILED: ",source.doi,type(exc).__name__)
 
     try:
         abstract=get_abstract_by_doi(source.doi)

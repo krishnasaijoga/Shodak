@@ -11,6 +11,7 @@ from shodak.research.deduplicator import deduplicate_sources
 from shodak.research.enrichment import enrich_sources
 from shodak.research.evidence import extract_evidence
 from shodak.research.evidence_deduplicator import deduplicate_evidence
+from shodak.research.filtering import filter_low_value_sources
 from shodak.research.planner import build_research_questions_with_fallback
 from shodak.research.quality import evaluate_research_quality
 from shodak.research.ranker import rank_sources
@@ -42,9 +43,13 @@ def _build_research_report_uncached(request:ResearchRequest)->ResearchReport:
 
     unique_sources=deduplicate_sources(sources)
 
-    print("FINAL SOURCES:",len(unique_sources))
+    print("UNIQUE SOURCES:",len(unique_sources))
 
-    ranked_sources=rank_sources(unique_sources)
+    filtered_sources=filter_low_value_sources(unique_sources)
+
+    print("FILTERED SOURCES:",len(filtered_sources))
+
+    ranked_sources=rank_sources(filtered_sources)
     
     print("RANKED SOURCES:",ranked_sources)
 
