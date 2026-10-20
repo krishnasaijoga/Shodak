@@ -8,6 +8,7 @@ from shodak.research.academic import search_academic_sources
 from shodak.research.contradictions import detect_contradictions_with_fallback
 from shodak.research.coverage import calculate_research_coverage
 from shodak.research.deduplicator import deduplicate_sources
+from shodak.research.enrichment import enrich_sources
 from shodak.research.evidence import extract_evidence
 from shodak.research.evidence_deduplicator import deduplicate_evidence
 from shodak.research.planner import build_research_questions_with_fallback
@@ -44,10 +45,18 @@ def _build_research_report_uncached(request:ResearchRequest)->ResearchReport:
     print("FINAL SOURCES:",len(unique_sources))
 
     ranked_sources=rank_sources(unique_sources)
-
+    
     print("RANKED SOURCES:",ranked_sources)
+
+    enriched_sources=enrich_sources(ranked_sources)
+
+    print("ENRICHED WITH ABSTRACT:",sum(
+        1 for source in enriched_sources if source.has_abstract
+    ))
+
     evidence=[]
-    for source in ranked_sources:
+
+    for source in enriched_sources:
         evidence.extend(extract_evidence(source))
     evidence=deduplicate_evidence(evidence)
 
@@ -55,11 +64,11 @@ def _build_research_report_uncached(request:ResearchRequest)->ResearchReport:
 
     coverage_score=calculate_research_coverage(questions,evidence)
     contradictions=detect_contradictions_with_fallback(evidence)
-    quality=evaluate_research_quality(ranked_sources,evidence,coverage_score=coverage_score)
+    quality=evaluate_research_quality(enriched_sources,evidence,coverage_score=coverage_score)
     return ResearchReport(
         request=request,
         research_questions=questions,
-        sources=ranked_sources,
+        sources=enriched_sources,
         evidence=evidence,
         contradictions=contradictions,
         quality=quality
