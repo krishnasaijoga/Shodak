@@ -6,10 +6,7 @@ def test_plain_doi():
 
 
 def test_https_doi():
-    assert (
-        normalize_doi("https://doi.org/10.1234/Example")
-        == "10.1234/example"
-    )
+    assert normalize_doi("https://doi.org/10.1234/Example") == "10.1234/example"
 
 
 def test_doi_prefix():

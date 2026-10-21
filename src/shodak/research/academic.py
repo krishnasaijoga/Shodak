@@ -14,60 +14,52 @@ SEMANTIC_SCHOLAR_URL = "https://api.semanticscholar.org/graph/v1/paper/search"
 CROSSREF_URL = "https://api.crossref.org/works"
 
 
-def search_semantic_scholar(query:str, limit:int=5)->list[Source]:
-    params={
-        "query":query,
-        "limit":limit,
-        "fields":"title,url,authors,year,abstract,venue,citationCount,externalIds"
+def search_semantic_scholar(query: str, limit: int = 5) -> list[Source]:
+    params = {
+        "query": query,
+        "limit": limit,
+        "fields": "title,url,authors,year,abstract,venue,citationCount,externalIds",
     }
 
     try:
-        response=httpx.get(
-            SEMANTIC_SCHOLAR_URL, params=params,timeout=20.0
-        )
-        if response.status_code==429:
+        response = httpx.get(SEMANTIC_SCHOLAR_URL, params=params, timeout=20.0)
+        if response.status_code == 429:
             raise ResearchRateLimitError("Semantic Scholar Rate limit reached.")
         response.raise_for_status()
     except httpx.TimeoutException as exc:
         raise ResearchConnectionError("Semantic Scholar request timed out.") from exc
 
-    payload=response.json()
+    payload = response.json()
 
-    sources=[]
-    for paper in payload.get("data",[]):
-        external_ids=paper.get("externalIds") or {}
-        url=paper.get("url")
+    sources = []
+    for paper in payload.get("data", []):
+        external_ids = paper.get("externalIds") or {}
+        url = paper.get("url")
         if not url:
             continue
-        source=Source(
+        source = Source(
             title=paper["title"],
             url=paper.get("url"),
             source_type=SourceType.academic,
-            authors=[
-                author["name"] for author in paper.get("authors",[]) if author.get("name")
-            ],
+            authors=[author["name"] for author in paper.get("authors", []) if author.get("name")],
             publication_year=paper.get("year"),
             abstract=paper.get("abstract"),
             doi=external_ids.get("DOI"),
             venue=paper.get("venue"),
             citation_count=paper.get("citationCount"),
-            provider=SourceProvider.semantic_scholar
+            provider=SourceProvider.semantic_scholar,
         )
         sources.append(normalize_source(source))
     return sources
 
 
-
-def search_crossref(query:str,limit:int=5)->list[Source]:
-    params={
-        "query.bibliographic":query,
-        "rows":limit
-    }
+def search_crossref(query: str, limit: int = 5) -> list[Source]:
+    params = {"query.bibliographic": query, "rows": limit}
 
     try:
-        response=httpx.get(CROSSREF_URL,params=params,timeout=20.0)
+        response = httpx.get(CROSSREF_URL, params=params, timeout=20.0)
 
-        if response.status_code==429:
+        if response.status_code == 429:
             raise ResearchRateLimitError("Crossref limit rate reached.")
         response.raise_for_status()
 
@@ -77,41 +69,38 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
     except httpx.HTTPError as exc:
         raise ResearchProviderError("Crossref request failed.") from exc
 
-    payload=response.json()
+    payload = response.json()
 
-    sources=[]
+    sources = []
 
-    for item in payload.get("message",{}).get("items",[]):
-        titles=item.get("title") or {}
+    for item in payload.get("message", {}).get("items", []):
+        titles = item.get("title") or {}
 
         if not titles:
             continue
 
-        title=titles[0] if titles else "untitled"
+        title = titles[0] if titles else "untitled"
 
-        doi=item.get("DOI")
+        doi = item.get("DOI")
 
         if not doi:
             continue
 
-        authors=[]
-        for author in item.get("author",[]):
-            given=author.get("given","")
-            family=author.get("family","")
-            full_name=f"{given} {family}".strip()
+        authors = []
+        for author in item.get("author", []):
+            given = author.get("given", "")
+            family = author.get("family", "")
+            full_name = f"{given} {family}".strip()
             if full_name:
                 authors.append(full_name)
-        published=(
-            item.get("published-print")
-            or item.get("published-online")
-            or item.get("issued")
-            or {}
+        published = (
+            item.get("published-print") or item.get("published-online") or item.get("issued") or {}
         )
-        date_parts=published.get("date-parts",[])
-        publication_year=None
+        date_parts = published.get("date-parts", [])
+        publication_year = None
 
         if date_parts and date_parts[0]:
-            publication_year=date_parts[0][0]
+            publication_year = date_parts[0][0]
 
         sources.append(
             normalize_source(
@@ -123,32 +112,23 @@ def search_crossref(query:str,limit:int=5)->list[Source]:
                     publication_year=publication_year,
                     doi=doi,
                     venue=(item.get("container-title") or [None])[0],
-                    provider=SourceProvider.crossref
+                    provider=SourceProvider.crossref,
                 )
             )
         )
     return sources
 
 
-def search_academic_sources(query:str,limit:int=5)->list[Source]:
+def search_academic_sources(query: str, limit: int = 5) -> list[Source]:
     try:
-        results=run_research_with_retry(
-            operation=lambda: (
-                search_semantic_scholar(
-                    query=query,
-                    limit=limit
-                )
-            ),
+        results = run_research_with_retry(
+            operation=lambda: search_semantic_scholar(query=query, limit=limit),
             max_attempts=settings.research_max_attempts,
             initial_delay=settings.research_retry_inital_delay,
-            backoff_multiplier=settings.research_retry_backoff_multiplier
+            backoff_multiplier=settings.research_retry_backoff_multiplier,
         )
         if results:
             return results
-    except (
-        ResearchProviderError,
-        ResearchRateLimitError,
-        ResearchConnectionError
-    ):
+    except (ResearchProviderError, ResearchRateLimitError, ResearchConnectionError):
         pass
-    return search_crossref(query,limit)
+    return search_crossref(query, limit)

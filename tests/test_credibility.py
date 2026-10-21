@@ -26,9 +26,8 @@ def test_peer_reviewed_source_scores_higher_than_unknown():
             provider=SourceProvider.semantic_scholar,
         )
     )
-    assert peer_reviewed.publication_status==PublicationStatus.peer_reviewed
-    assert credibililty_score(peer_reviewed)>credibililty_score(unknown)
-
+    assert peer_reviewed.publication_status == PublicationStatus.peer_reviewed
+    assert credibililty_score(peer_reviewed) > credibililty_score(unknown)
 
 
 def test_preprint_receives_lower_status_score():
@@ -40,5 +39,5 @@ def test_preprint_receives_lower_status_score():
             provider=SourceProvider.semantic_scholar,
         )
     )
-    assert preprint.publication_status==PublicationStatus.preprint
-    assert credibililty_score(preprint)>=1.0
+    assert preprint.publication_status == PublicationStatus.preprint
+    assert credibililty_score(preprint) >= 1.0

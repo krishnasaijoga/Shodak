@@ -9,26 +9,19 @@ from shodak.writing.generator import WritingRequest
 
 
 def test_style_node_adds_style_data():
-    documents=[
+    documents = [
         StyleDocument(
             title="Blog Example",
             document_type=StyleDocumentType.blog,
-            content="I enjoy explaining AI systems through simple examples."
+            content="I enjoy explaining AI systems through simple examples.",
         )
     ]
-    state:ShodakState={
-        "research_request":ResearchRequest(
-            topic="AI systems"
-        ),
-        "writing_request":WritingRequest(
-            output_type=OutputType.blog
-        )
+    state: ShodakState = {
+        "research_request": ResearchRequest(topic="AI systems"),
+        "writing_request": WritingRequest(output_type=OutputType.blog),
     }
-    with patch(
-        "shodak.graph.style_context.load_style_corpus",
-        return_value=documents
-    ):
-        result=style_context_node(state)
-    assert result["style_document_type"]==StyleDocumentType.blog
+    with patch("shodak.graph.style_context.load_style_corpus", return_value=documents):
+        result = style_context_node(state)
+    assert result["style_document_type"] == StyleDocumentType.blog
     assert result["style_profile"] is not None
-    assert isinstance(result["style_examples"],list)
+    assert isinstance(result["style_examples"], list)

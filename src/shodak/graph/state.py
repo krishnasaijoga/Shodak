@@ -11,16 +11,16 @@ from shodak.style.profile import StyleProfile
 
 
 class ShodakState(TypedDict, total=False):
-    research_request:ResearchRequest
+    research_request: ResearchRequest
     writing_request: WritingRequest
-    research_report:ResearchReport
-    writing_draft:WritingDraft
-    rendered_output:str
-    error: str|None
-    style_document_type:StyleDocumentType
-    style_profile:StyleProfile|None
-    style_examples:list[str]
-    research_synthesis:ResearchSynthesis | None
-    evaluation_scorecard:EvaluationScorecard | None
-    evaluation_error:str|None
-    revision_count:int
+    research_report: ResearchReport
+    writing_draft: WritingDraft
+    rendered_output: str
+    error: str | None
+    style_document_type: StyleDocumentType
+    style_profile: StyleProfile | None
+    style_examples: list[str]
+    research_synthesis: ResearchSynthesis | None
+    evaluation_scorecard: EvaluationScorecard | None
+    evaluation_error: str | None
+    revision_count: int

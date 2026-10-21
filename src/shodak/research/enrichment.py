@@ -4,7 +4,7 @@ from shodak.research.exceptions import ResearchConnectionError, ResearchRateLimi
 from shodak.research.openalex import get_abstract_by_doi
 
 
-def enrich_source(source:Source)->Source:
+def enrich_source(source: Source) -> Source:
     if source.abstract:
         return source
 
@@ -12,49 +12,28 @@ def enrich_source(source:Source)->Source:
         return source
 
     try:
-        results=search_semantic_scholar(
-            query=source.doi,
-            limit=1
-        )
+        results = search_semantic_scholar(query=source.doi, limit=1)
 
         if results:
-            enriched=results[0]
+            enriched = results[0]
             if enriched.abstract:
                 return source.model_copy(
-                    update={
-                        "abstract":enriched.abstract,
-                        "has_abstract":True
-                    }
+                    update={"abstract": enriched.abstract, "has_abstract": True}
                 )
-    except (
-        ResearchRateLimitError,
-        ResearchConnectionError
-    )as exc:
-        print("SEMANTIC SCHOLAR ENRICHMENT FAILED: ",source.doi,type(exc).__name__)
+    except (ResearchRateLimitError, ResearchConnectionError) as exc:
+        print("SEMANTIC SCHOLAR ENRICHMENT FAILED: ", source.doi, type(exc).__name__)
 
     try:
-        abstract=get_abstract_by_doi(source.doi)
-    except (
-                ResearchRateLimitError,
-                ResearchConnectionError
-            ) as exc:
-                print("OPENALEX ENRICHMENT FAILED:", source.doi, type(exc).__name__)
-                abstract=None
-        
+        abstract = get_abstract_by_doi(source.doi)
+    except (ResearchRateLimitError, ResearchConnectionError) as exc:
+        print("OPENALEX ENRICHMENT FAILED:", source.doi, type(exc).__name__)
+        abstract = None
+
     if abstract:
-        return source.model_copy(
-            update={
-                "abstract":abstract,
-                "has_abstract":True
-            }
-        )
+        return source.model_copy(update={"abstract": abstract, "has_abstract": True})
 
     return source
 
 
-def enrich_sources(
-        sources:list[Source]
-)->list[Source]:
-    return [
-        enrich_source(source) for source in sources
-    ]
+def enrich_sources(sources: list[Source]) -> list[Source]:
+    return [enrich_source(source) for source in sources]

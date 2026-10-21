@@ -2,12 +2,10 @@ from shodak.evaluation.benchmarks import load_quality_benchmarks
 
 
 def test_quality_benchmarks_load():
-    benchmarks=load_quality_benchmarks()
-    assert len(benchmarks)>=5
+    benchmarks = load_quality_benchmarks()
+    assert len(benchmarks) >= 5
 
-    names={
-        benchmark["name"] for benchmark in benchmarks
-    }
+    names = {benchmark["name"] for benchmark in benchmarks}
 
     assert "well_grounded_blog" in names
     assert "unsupported_claims" in names

@@ -5,13 +5,11 @@ from shodak.models.research import ResearchRequest
 
 
 class ResearchPlan(BaseModel):
-    questions:list[str]=Field(min_length=3,max_length=12)
+    questions: list[str] = Field(min_length=3, max_length=12)
 
 
-def build_llm_research_questions(
-        request:ResearchRequest
-)->list[str]:
-    prompt=f"""
+def build_llm_research_questions(request: ResearchRequest) -> list[str]:
+    prompt = f"""
 You are a research planning assistant.
 
 Break the following topic into focused research questions.
@@ -31,5 +29,5 @@ Requirements:
 - Do not answer the question.
 - Return only structured output.
 """
-    result=invoke_structured_with_fallback(schema=ResearchPlan,prompt=prompt)
+    result = invoke_structured_with_fallback(schema=ResearchPlan, prompt=prompt)
     return result.questions

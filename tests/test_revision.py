@@ -10,10 +10,8 @@ from shodak.writing.revision import RevisedDraft, RevisedSection, revise_draft_w
 
 
 def test_llm_revision_generates_structured_draft():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -21,19 +19,15 @@ def test_llm_revision_generates_structured_draft():
                 claim="Retrieval can improve access to external knowledge.",
                 supporting_text="Supporting evidence.",
                 citation=Citation(
-                    source_title="Example Paper",
-                    source_url="https://example.com/paper"
+                    source_title="Example Paper", source_url="https://example.com/paper"
                 ),
-                confidence=0.8
+                confidence=0.8,
             )
         ],
         contradictions=[],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
 
     scorecard = EvaluationScorecard(
@@ -54,7 +48,7 @@ def test_llm_revision_generates_structured_draft():
                 content="Unsupported content.",
                 citations=[],
             )
-        ]
+        ],
     )
 
     with patch(
@@ -64,17 +58,13 @@ def test_llm_revision_generates_structured_draft():
             sections=[
                 RevisedSection(
                     heading="Introduction",
-                    content="Retrieval improves access to external knowledge."
+                    content="Retrieval improves access to external knowledge.",
                 )
-            ]
-        )
+            ],
+        ),
     ):
-        draft=revise_draft_with_llm(
-            draft=original_draft,
-            report=report,
-            scorecard=scorecard
-        )
-    assert draft.title=="Understanding RAG"
-    assert len(draft.sections)==1
-    assert len(draft.sections[0].citations)==1
-    assert draft.sections[0].heading=="Introduction"
+        draft = revise_draft_with_llm(draft=original_draft, report=report, scorecard=scorecard)
+    assert draft.title == "Understanding RAG"
+    assert len(draft.sections) == 1
+    assert len(draft.sections[0].citations) == 1
+    assert draft.sections[0].heading == "Introduction"

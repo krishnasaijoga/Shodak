@@ -9,8 +9,8 @@ def test_arxiv_source_is_preprint():
         source_type=SourceType.academic,
         provider=SourceProvider.semantic_scholar,
     )
-    status=detect_publication_status(source)
-    assert status==PublicationStatus.preprint
+    status = detect_publication_status(source)
+    assert status == PublicationStatus.preprint
 
 
 def test_unknown_source_remains_unknown():
@@ -20,5 +20,5 @@ def test_unknown_source_remains_unknown():
         source_type=SourceType.academic,
         provider=SourceProvider.semantic_scholar,
     )
-    status=detect_publication_status(source)
-    assert status==PublicationStatus.unknown
+    status = detect_publication_status(source)
+    assert status == PublicationStatus.unknown

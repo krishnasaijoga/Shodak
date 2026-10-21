@@ -21,9 +21,9 @@ def test_cache_really_stores_value():
 def test_research_report_uses_cache():
     cache.clear()
 
-    request=ResearchRequest(topic="retrieval augmented generation")
+    request = ResearchRequest(topic="retrieval augmented generation")
 
-    fake_report=ResearchReport(
+    fake_report = ResearchReport(
         request=request,
         research_questions=[],
         sources=[],
@@ -34,37 +34,35 @@ def test_research_report_uses_cache():
             source_count=0,
             evidence_count=0,
             coverage_score=0.0,
-            reason="Test"
-        )
+            reason="Test",
+        ),
     )
 
     with (
         patch(
             "shodak.research.report._build_research_report_uncached", return_value=fake_report
         ) as mock_build,
-        patch("shodak.research.report.settings.cache_enabled", True)
+        patch("shodak.research.report.settings.cache_enabled", True),
     ):
-        first=build_research_report(request)
-        second=build_research_report(request)
-    assert first==fake_report
-    assert second==fake_report
+        first = build_research_report(request)
+        second = build_research_report(request)
+    assert first == fake_report
+    assert second == fake_report
 
-    assert mock_build.call_count==1
+    assert mock_build.call_count == 1
 
 
 def test_different_research_requests_use_different_cache_keys():
     cache.clear()
 
-    request_a=ResearchRequest(topic="retrieval augmented generation")
-    request_b=ResearchRequest(topic="transformer attention")
+    request_a = ResearchRequest(topic="retrieval augmented generation")
+    request_b = ResearchRequest(topic="transformer attention")
 
     with (
-        patch(
-            "shodak.research.report._build_research_report_uncached"
-        ) as mock_build,
-        patch("shodak.research.report.settings.cache_enabled",True)
+        patch("shodak.research.report._build_research_report_uncached") as mock_build,
+        patch("shodak.research.report.settings.cache_enabled", True),
     ):
-        mock_build.side_effect=[
+        mock_build.side_effect = [
             ResearchReport(
                 request=request_a,
                 research_questions=[],
@@ -72,11 +70,8 @@ def test_different_research_requests_use_different_cache_keys():
                 evidence=[],
                 contradictions=[],
                 quality=ResearchQuality(
-                    sufficient_evidence=False,
-                    source_count=0,
-                    evidence_count=0,
-                    coverage_score=0.0
-                )
+                    sufficient_evidence=False, source_count=0, evidence_count=0, coverage_score=0.0
+                ),
             ),
             ResearchReport(
                 request=request_b,
@@ -85,14 +80,11 @@ def test_different_research_requests_use_different_cache_keys():
                 evidence=[],
                 contradictions=[],
                 quality=ResearchQuality(
-                    sufficient_evidence=False,
-                    source_count=0,
-                    evidence_count=0,
-                    coverage_score=0.0
-                )
-            )
+                    sufficient_evidence=False, source_count=0, evidence_count=0, coverage_score=0.0
+                ),
+            ),
         ]
         build_research_report(request_a)
         build_research_report(request_b)
 
-    assert mock_build.call_count==2
+    assert mock_build.call_count == 2

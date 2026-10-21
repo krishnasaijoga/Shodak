@@ -4,20 +4,18 @@ from shodak.models.synthesis import ResearchSynthesis
 from shodak.research.synthesis_fallback import synthesize_research_deterministic
 
 
-def synthesize_research(
-        report:ResearchReport
-)->ResearchSynthesis:
+def synthesize_research(report: ResearchReport) -> ResearchSynthesis:
 
-    evidence_text="\n".join(
+    evidence_text = "\n".join(
         (
             f"[{index}] {evidence.claim}\n"
             f"Source: {evidence.citation.source_title}\n"
             f"Confidence: {evidence.confidence}"
         )
-        for index,evidence in enumerate(report.evidence)
+        for index, evidence in enumerate(report.evidence)
     )
 
-    contradiction_text="\n".join(
+    contradiction_text = "\n".join(
         (
             f"- {item.evidence_a.claim}\n"
             f" vs\n"
@@ -26,7 +24,7 @@ def synthesize_research(
         )
         for item in report.contradictions
     )
-    prompt=f"""
+    prompt = f"""
 You are te research synthesis component of Shodak.
 
 Topic:
@@ -52,13 +50,11 @@ Tasks:
 - Assign confidence based only on the supplied evidence.
 - Return structured output only.
 """
-    return invoke_structured_with_fallback(schema=ResearchSynthesis,prompt=prompt)
+    return invoke_structured_with_fallback(schema=ResearchSynthesis, prompt=prompt)
 
 
-def synthesize_research_with_fallback(
-        report:ResearchReport
-)->ResearchSynthesis:
+def synthesize_research_with_fallback(report: ResearchReport) -> ResearchSynthesis:
     try:
         return synthesize_research(report)
-    except Exception: # noqa BLE001
+    except Exception:  # noqa BLE001
         return synthesize_research_deterministic(report)

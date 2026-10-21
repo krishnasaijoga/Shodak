@@ -8,10 +8,8 @@ from shodak.writing.generator import generate_draft_deterministic
 
 
 def test_generate_blog_writing():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="Retrieval Augmented Generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="Retrieval Augmented Generation"),
         research_questions=["What is a Retrieval augmented generator"],
         sources=[],
         evidence=[
@@ -19,35 +17,27 @@ def test_generate_blog_writing():
                 claim="Retreival augmented generation uses external information sources.",
                 supporting_text="Supporting evidence.",
                 citation=Citation(
-                    source_title="Example Paper",
-                    source_url="https://example.com/paper"
+                    source_title="Example Paper", source_url="https://example.com/paper"
                 ),
-                confidence=0.7
+                confidence=0.7,
             )
         ],
         contradictions=[],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
-    request=WritingRequest(
-        output_type=OutputType.blog
-    )
-    draft=generate_draft_deterministic(report,request)
-    assert draft.output_type==OutputType.blog
-    assert draft.title=="Retrieval Augmented Generation"
-    assert len(draft.sections)>0
+    request = WritingRequest(output_type=OutputType.blog)
+    draft = generate_draft_deterministic(report, request)
+    assert draft.output_type == OutputType.blog
+    assert draft.title == "Retrieval Augmented Generation"
+    assert len(draft.sections) > 0
     assert draft.sections[0].content
 
 
 def test_custom_title_is_used():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="AI agents"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="AI agents"),
         research_questions=[],
         sources=[],
         evidence=[],
@@ -57,23 +47,17 @@ def test_custom_title_is_used():
             source_count=0,
             evidence_count=0,
             coverage_score=0.0,
-            reason="No evidence available"
-        )
+            reason="No evidence available",
+        ),
     )
-    request=WritingRequest(
-        output_type=OutputType.linkedin,
-        title="Why AI agents matter"
-    )
-    draft=generate_draft_deterministic(report,request)
-    assert draft.title=="Why AI agents matter"
-
+    request = WritingRequest(output_type=OutputType.linkedin, title="Why AI agents matter")
+    draft = generate_draft_deterministic(report, request)
+    assert draft.title == "Why AI agents matter"
 
 
 def test_draft_contains_citation():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -83,34 +67,25 @@ def test_draft_contains_citation():
                 citation=Citation(
                     source_title="Example Paper",
                     source_url="https://example.com/paper",
-                    doi="10.1234/example"
+                    doi="10.1234/example",
                 ),
-                confidence=0.8
+                confidence=0.8,
             )
         ],
         contradictions=[],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
-    request=WritingRequest(
-        output_type=OutputType.blog,
-        include_citation=True
-    )
-    draft=generate_draft_deterministic(report,request)
-    assert len(draft.sections[0].citations)==1
-    assert draft.sections[0].citations[0].source_title=="Example Paper"
-
+    request = WritingRequest(output_type=OutputType.blog, include_citation=True)
+    draft = generate_draft_deterministic(report, request)
+    assert len(draft.sections[0].citations) == 1
+    assert draft.sections[0].citations[0].source_title == "Example Paper"
 
 
 def test_citations_can_be_disabled():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -118,34 +93,24 @@ def test_citations_can_be_disabled():
                 claim="Retrieval improves knowledge access.",
                 supporting_text="Supporting evidence.",
                 citation=Citation(
-                    source_title="Example Paper",
-                    source_url="https://example.com/paper"
+                    source_title="Example Paper", source_url="https://example.com/paper"
                 ),
-                confidence=0.7
+                confidence=0.7,
             )
         ],
         contradictions=[],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
-    request=WritingRequest(
-        output_type=OutputType.linkedin,
-        include_citation=False
-    )
-    draft=generate_draft_deterministic(report,request)
-    assert draft.sections[0].citations==[]
-
+    request = WritingRequest(output_type=OutputType.linkedin, include_citation=False)
+    draft = generate_draft_deterministic(report, request)
+    assert draft.sections[0].citations == []
 
 
 def test_writer_handles_insufficient_evidence():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="Experimental AI system"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="Experimental AI system"),
         research_questions=[],
         sources=[],
         evidence=[],
@@ -155,32 +120,23 @@ def test_writer_handles_insufficient_evidence():
             source_count=0,
             evidence_count=0,
             coverage_score=0.0,
-            reason="Too little supporting evidence was extracted."
-        )
+            reason="Too little supporting evidence was extracted.",
+        ),
     )
-    request=WritingRequest(output_type=OutputType.blog)
-    draft=generate_draft_deterministic(report,request)
-    assert len(draft.sections)==5
-    headings=[section.heading for section in draft.sections]
-    assert headings==[
-        "Introduction",
-        "Background",
-        "Key Findings",
-        "Discussion",
-        "Conclusion"
-    ]
-    assert all(section.citations==[] for section in draft.sections)
+    request = WritingRequest(output_type=OutputType.blog)
+    draft = generate_draft_deterministic(report, request)
+    assert len(draft.sections) == 5
+    headings = [section.heading for section in draft.sections]
+    assert headings == ["Introduction", "Background", "Key Findings", "Discussion", "Conclusion"]
+    assert all(section.citations == [] for section in draft.sections)
 
 
 def test_writer_surfaces_conflicting_evidence():
-    evidence_a=Evidence(
+    evidence_a = Evidence(
         claim="Retrieval improves answer quality.",
         supporting_text="Supporting evidence A.",
-        citation=Citation(
-            source_title="Paper One",
-            source_url="https://example.com/"
-        ),
-        confidence=0.8
+        citation=Citation(source_title="Paper One", source_url="https://example.com/"),
+        confidence=0.8,
     )
     evidence_b = Evidence(
         claim="Retrieval does not improve answer quality.",
@@ -191,10 +147,8 @@ def test_writer_surfaces_conflicting_evidence():
         ),
         confidence=0.8,
     )
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[evidence_a, evidence_b],
@@ -203,12 +157,14 @@ def test_writer_surfaces_conflicting_evidence():
                 topic="Retrieval effectiveness",
                 evidence_a=evidence_a,
                 evidence_b=evidence_b,
-                explanation="The sources reach conflicting conclusions."
+                explanation="The sources reach conflicting conclusions.",
             )
         ],
-        quality=ResearchQuality(sufficient_evidence=True,source_count=0,evidence_count=0,coverage_score=0.0)
+        quality=ResearchQuality(
+            sufficient_evidence=True, source_count=0, evidence_count=0, coverage_score=0.0
+        ),
     )
-    request=WritingRequest(output_type=OutputType.blog)
-    draft=generate_draft_deterministic(report,request)
-    headings=[section.heading for section in draft.sections]
+    request = WritingRequest(output_type=OutputType.blog)
+    draft = generate_draft_deterministic(report, request)
+    headings = [section.heading for section in draft.sections]
     assert "Conflicting Evidence" in headings

@@ -9,10 +9,8 @@ from shodak.writing.llm_writer import GeneratedDraft, GeneratedSection, generate
 
 
 def test_llm_writer_generates_structured_draft():
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -20,56 +18,50 @@ def test_llm_writer_generates_structured_draft():
                 claim="Retrieval can improve access to external knowledge.",
                 supporting_text="Supporting evidence.",
                 citation=Citation(
-                    source_title="Example Paper",
-                    source_url="https://example.com/paper"
+                    source_title="Example Paper", source_url="https://example.com/paper"
                 ),
-                confidence=0.8
+                confidence=0.8,
             )
         ],
         contradictions=[],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
 
-    synthesis=ResearchSynthesis(
-            key_findings=[
-                SynthesizedFinding(
-                    finding="Retrieval can improve access to external knowledge.",
-                    supporting_evidence_indices=[0],
-                    confidence=0.8
-                )
-            ],
-            uncertainties=["Effectiveness depends on retrieval quality."],
-            contradictions=[],
-            research_gaps=[],
-            overall_confidence=0.8
+    synthesis = ResearchSynthesis(
+        key_findings=[
+            SynthesizedFinding(
+                finding="Retrieval can improve access to external knowledge.",
+                supporting_evidence_indices=[0],
+                confidence=0.8,
+            )
+        ],
+        uncertainties=["Effectiveness depends on retrieval quality."],
+        contradictions=[],
+        research_gaps=[],
+        overall_confidence=0.8,
     )
 
-    request=WritingRequest(
-        output_type=OutputType.blog
-    )
+    request = WritingRequest(output_type=OutputType.blog)
 
-    structured_llm=MagicMock()
-    structured_llm.invoke.return_value=GeneratedDraft(
+    structured_llm = MagicMock()
+    structured_llm.invoke.return_value = GeneratedDraft(
         title="Understanding Retrieval Augmented Generation",
         sections=[
             GeneratedSection(
                 heading="Introduction",
-                content="Retrieval augmented generation connects models with external knowledge."
+                content="Retrieval augmented generation connects models with external knowledge.",
             ),
             GeneratedSection(
                 heading="Conclusion",
-                content="Its effectiveness still depends heavily on retrieval quality."
-            )
-        ]
+                content="Its effectiveness still depends heavily on retrieval quality.",
+            ),
+        ],
     )
 
-    base_llm=MagicMock()
-    base_llm.with_structured_output.return_value=structured_llm
+    base_llm = MagicMock()
+    base_llm.with_structured_output.return_value = structured_llm
 
     with patch(
         "shodak.writing.llm_writer.invoke_structured_with_fallback",
@@ -78,16 +70,14 @@ def test_llm_writer_generates_structured_draft():
             sections=[
                 GeneratedSection(
                     heading="Introduction",
-                    content="Retrieval improves access to external knowledge."
+                    content="Retrieval improves access to external knowledge.",
                 )
-            ]
-        )
+            ],
+        ),
     ):
-        draft=generate_draft_with_llm(
-            report=report,
-            request=request,
-            research_synthesis=synthesis
+        draft = generate_draft_with_llm(
+            report=report, request=request, research_synthesis=synthesis
         )
-    assert draft.title=="Understanding RAG"
-    assert len(draft.sections)==1
-    assert draft.sections[0].heading=="Introduction"
+    assert draft.title == "Understanding RAG"
+    assert len(draft.sections) == 1
+    assert draft.sections[0].heading == "Introduction"

@@ -9,28 +9,26 @@ from shodak.writing.postprocess import enforce_contradiction_handling
 
 
 def test_contradictions_are_always_surfaced():
-    evidence_a=Evidence(
+    evidence_a = Evidence(
         claim="Retrieval improves access to external knowledge.",
         supporting_text="Supporting evidence A.",
         citation=Citation(
             source_title="Paper One",
             source_url="https://example.com/1",
         ),
-        confidence=0.8
+        confidence=0.8,
     )
-    evidence_b=Evidence(
+    evidence_b = Evidence(
         claim="Retrieval does not always improve answer quality.",
         supporting_text="Supporting evidence B.",
         citation=Citation(
             source_title="Paper Two",
             source_url="https://example.com/2",
         ),
-        confidence=0.8
+        confidence=0.8,
     )
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -42,9 +40,7 @@ def test_contradictions_are_always_surfaced():
                 topic="Retrieval effectiveness",
                 evidence_a=evidence_a,
                 evidence_b=evidence_b,
-                explanation=(
-                    "The sources report different outcomes."
-                ),
+                explanation=("The sources report different outcomes."),
             )
         ],
         quality=ResearchQuality(
@@ -52,10 +48,10 @@ def test_contradictions_are_always_surfaced():
             source_count=2,
             evidence_count=2,
             coverage_score=0.8,
-        )
+        ),
     )
 
-    draft=WritingDraft(
+    draft = WritingDraft(
         output_type=OutputType.blog,
         title="Understanding RAG",
         sections=[
@@ -74,24 +70,18 @@ def test_contradictions_are_always_surfaced():
                 content="Conclusion content.",
                 citations=[],
             ),
-        ]
+        ],
     )
-    result=enforce_contradiction_handling(
-        draft=draft,
-        report=report
-    )
-    headings=[
-        section.heading for section in result.sections
-    ]
+    result = enforce_contradiction_handling(draft=draft, report=report)
+    headings = [section.heading for section in result.sections]
 
     assert "Conflicting Evidence" in headings
 
-    conflicting_index=headings.index("Conflicting Evidence")
+    conflicting_index = headings.index("Conflicting Evidence")
 
-    conclusion_index=headings.index("Conclusion")
+    conclusion_index = headings.index("Conclusion")
 
-    assert conflicting_index<conclusion_index
-
+    assert conflicting_index < conclusion_index
 
 
 def test_existing_conflicting_evidence_section_is_not_duplicated():
@@ -116,9 +106,7 @@ def test_existing_conflicting_evidence_section_is_not_duplicated():
     )
 
     report = ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[
@@ -130,9 +118,7 @@ def test_existing_conflicting_evidence_section_is_not_duplicated():
                 topic="Retrieval effectiveness",
                 evidence_a=evidence_a,
                 evidence_b=evidence_b,
-                explanation=(
-                    "The sources report different outcomes."
-                ),
+                explanation=("The sources report different outcomes."),
             )
         ],
         quality=ResearchQuality(
@@ -154,10 +140,7 @@ def test_existing_conflicting_evidence_section_is_not_duplicated():
             ),
             DraftSection(
                 heading="Conflicting Evidence",
-                content=(
-                    "The available evidence reports "
-                    "different outcomes."
-                ),
+                content=("The available evidence reports different outcomes."),
                 citations=[],
             ),
             DraftSection(
@@ -176,8 +159,7 @@ def test_existing_conflicting_evidence_section_is_not_duplicated():
     conflicting_sections = [
         section
         for section in result.sections
-        if section.heading.strip().lower()
-        == "conflicting evidence"
+        if section.heading.strip().lower() == "conflicting evidence"
     ]
 
     assert len(conflicting_sections) == 1
@@ -185,9 +167,7 @@ def test_existing_conflicting_evidence_section_is_not_duplicated():
 
 def test_no_contradictions_does_not_add_section():
     report = ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[],
         sources=[],
         evidence=[],
@@ -222,9 +202,6 @@ def test_no_contradictions_does_not_add_section():
         report=report,
     )
 
-    headings = [
-        section.heading
-        for section in result.sections
-    ]
+    headings = [section.heading for section in result.sections]
 
     assert "Conflicting Evidence" not in headings

@@ -17,29 +17,22 @@ def test_supported_section_has_low_hallucination_risk():
             confidence=0.9,
         )
     ]
-    draft=WritingDraft(
+    draft = WritingDraft(
         output_type=OutputType.blog,
         title="RAG",
         sections=[
             DraftSection(
                 heading="Introduction",
-                content=(
-                    "Retrieval systems improve access "
-                    "to external knowledge."
-                ),
+                content=("Retrieval systems improve access to external knowledge."),
                 citations=[],
             )
         ],
     )
-    result=evaluate_hallucination(
-        draft=draft,
-        evidence_items=evidence
-    )
-    assert result.supported_sections==1
-    assert result.unsupported_sections==0
-    assert result.hallucination_risk==0.0
-    assert result.flagged_sections==[]
-
+    result = evaluate_hallucination(draft=draft, evidence_items=evidence)
+    assert result.supported_sections == 1
+    assert result.unsupported_sections == 0
+    assert result.hallucination_risk == 0.0
+    assert result.flagged_sections == []
 
 
 def test_unsupported_section_is_flagged():
@@ -60,19 +53,16 @@ def test_unsupported_section_is_flagged():
         sections=[
             DraftSection(
                 heading="Cost",
-                content=(
-                    "RAG reduces inference cost "
-                    "by seventy percent."
-                ),
+                content=("RAG reduces inference cost by seventy percent."),
                 citations=[],
             )
         ],
     )
-    result=evaluate_hallucination(draft=draft,evidence_items=evidence)
-    assert result.supported_sections==0
-    assert result.unsupported_sections==1
-    assert result.hallucination_risk==1.0
-    assert result.flagged_sections==["Cost"]
+    result = evaluate_hallucination(draft=draft, evidence_items=evidence)
+    assert result.supported_sections == 0
+    assert result.unsupported_sections == 1
+    assert result.hallucination_risk == 1.0
+    assert result.flagged_sections == ["Cost"]
 
 
 def test_mixed_draft_hallucination_risk():
@@ -93,26 +83,18 @@ def test_mixed_draft_hallucination_risk():
         sections=[
             DraftSection(
                 heading="Introduction",
-                content=(
-                    "Retrieval improves access "
-                    "to external knowledge."
-                ),
+                content=("Retrieval improves access to external knowledge."),
                 citations=[],
             ),
             DraftSection(
                 heading="Performance",
-                content=(
-                    "RAG guarantees perfect accuracy "
-                    "for every language model."
-                ),
+                content=("RAG guarantees perfect accuracy for every language model."),
                 citations=[],
             ),
         ],
     )
-    result=evaluate_hallucination(
-        draft=draft,evidence_items=evidence
-    )
-    assert result.supported_sections==1
-    assert result.unsupported_sections==1
-    assert result.hallucination_risk==0.5
-    assert result.flagged_sections==["Performance"]
+    result = evaluate_hallucination(draft=draft, evidence_items=evidence)
+    assert result.supported_sections == 1
+    assert result.unsupported_sections == 1
+    assert result.hallucination_risk == 0.5
+    assert result.flagged_sections == ["Performance"]

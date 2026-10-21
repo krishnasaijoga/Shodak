@@ -5,36 +5,26 @@ from langchain_openai import ChatOpenAI
 from shodak.config import settings
 
 
-def _get_groq_llm()->BaseChatModel:
+def _get_groq_llm() -> BaseChatModel:
     if not settings.groq_api_key:
-        raise ValueError(
-            "GROQ_API_KEY is not configured"
-        )
-    return ChatGroq(
-        model=settings.groq_model,
-        api_key=settings.groq_api_key,
-        temperature=0
-    )
+        raise ValueError("GROQ_API_KEY is not configured")
+    return ChatGroq(model=settings.groq_model, api_key=settings.groq_api_key, temperature=0)
 
 
-def _get_openai_llm()->BaseChatModel:
+def _get_openai_llm() -> BaseChatModel:
     if not settings.openai_api_key:
         raise ValueError("OPENAI_API_KEY is not configured")
-    return ChatOpenAI(
-        model=settings.openai_model,
-        api_key=settings.openai_api_key,
-        temperature=0
-    )
+    return ChatOpenAI(model=settings.openai_model, api_key=settings.openai_api_key, temperature=0)
 
 
-def get_llm_for_provider(provider:str)->BaseChatModel:
-    provider=provider.lower()
-    if provider=="groq":
+def get_llm_for_provider(provider: str) -> BaseChatModel:
+    provider = provider.lower()
+    if provider == "groq":
         return _get_groq_llm()
-    if provider=="openai":
+    if provider == "openai":
         return _get_openai_llm()
     raise ValueError(f"Unsupported LLM provider: {provider}")
 
 
-def get_llm()->BaseChatModel:
+def get_llm() -> BaseChatModel:
     return get_llm_for_provider(settings.llm_provider)

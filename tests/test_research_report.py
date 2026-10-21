@@ -7,7 +7,7 @@ from shodak.research.report import build_research_report
 
 
 def test_build_research_report():
-    source=normalize_source(
+    source = normalize_source(
         Source(
             title="Example Paper",
             url="https://example.com/paper",
@@ -22,16 +22,10 @@ def test_build_research_report():
             citation_count=25,
         )
     )
-    with patch(
-        "shodak.research.report.search_academic_sources",
-        return_value=[source]
-    ):
-        request=ResearchRequest(
-            topic="retrieval augmented generation",
-            max_sources=5
-        )
-        report=build_research_report(request)
-    assert report.request.topic=="retrieval augmented generation"
-    assert len(report.research_questions)>0
-    assert len(report.sources)==1
-    assert len(report.evidence)>0
+    with patch("shodak.research.report.search_academic_sources", return_value=[source]):
+        request = ResearchRequest(topic="retrieval augmented generation", max_sources=5)
+        report = build_research_report(request)
+    assert report.request.topic == "retrieval augmented generation"
+    assert len(report.research_questions) > 0
+    assert len(report.sources) == 1
+    assert len(report.evidence) > 0

@@ -2,10 +2,10 @@ import logging
 import time
 from collections.abc import Callable
 
-logger=logging.getLogger("shodak.llm.retry")
+logger = logging.getLogger("shodak.llm.retry")
 
 
-RETRYABLE_MESSAGES={
+RETRYABLE_MESSAGES = {
     "429",
     "rate limit",
     "too many requests",
@@ -14,43 +14,43 @@ RETRYABLE_MESSAGES={
     "temporarily unavailable",
     "service unavailable",
     "connection error",
-    "connection reset"
+    "connection reset",
 }
 
 
-def is_retryable_error(exc:Exception)->bool:
-    message=str(exc).lower()
+def is_retryable_error(exc: Exception) -> bool:
+    message = str(exc).lower()
     return any(item in message for item in RETRYABLE_MESSAGES)
 
 
 def run_with_retry[T](
-        operation:Callable[[],T],
-        max_attempts:int=3,
-        initial_delay:float=0.5,
-        backoff_multiplier:float=2.0,
-        on_retry:Callable[[],None]|None=None
-)->T:
-    if max_attempts<1:
+    operation: Callable[[], T],
+    max_attempts: int = 3,
+    initial_delay: float = 0.5,
+    backoff_multiplier: float = 2.0,
+    on_retry: Callable[[], None] | None = None,
+) -> T:
+    if max_attempts < 1:
         raise ValueError("max_attempts must be at least 1.")
-    delay=initial_delay
-    last_error:Exception | None=None
+    delay = initial_delay
+    last_error: Exception | None = None
 
-    for attempt in range(1,max_attempts+1):
+    for attempt in range(1, max_attempts + 1):
         try:
             return operation()
         except Exception as exc:
-            last_error=exc
-            if not is_retryable_error(exc) or attempt==max_attempts:
+            last_error = exc
+            if not is_retryable_error(exc) or attempt == max_attempts:
                 raise
             logger.warning(
                 "retrying_operation | attempt=%s | max_attempts=%s | delay=%.2f | error_type=%s",
                 attempt,
                 max_attempts,
                 delay,
-                type(exc).__name__
+                type(exc).__name__,
             )
             if on_retry is not None:
                 on_retry()
             time.sleep(delay)
-            delay*=backoff_multiplier
+            delay *= backoff_multiplier
     raise RuntimeError("Retry operation failed unexpectedly.") from last_error

@@ -12,60 +12,54 @@ from shodak.writing.templates import get_writing_template
 
 
 class GeneratedSection(BaseModel):
-    heading:str
-    content:str
+    heading: str
+    content: str
 
 
 class GeneratedDraft(BaseModel):
-    title:str
-    sections:list[GeneratedSection]=Field(min_length=1)
+    title: str
+    sections: list[GeneratedSection] = Field(min_length=1)
 
 
 def generate_draft_with_llm(
-        report:ResearchReport,
-        request:WritingRequest,
-        style_profile:StyleProfile|None=None,
-        style_examples:list[str]|None=None,
-        research_synthesis:ResearchSynthesis|None=None
-)->WritingDraft:
-    
-    template=get_writing_template(request.output_type)
-    
-    evidence_text="\n".join(f"- {item.claim}" for item in report.evidence)
+    report: ResearchReport,
+    request: WritingRequest,
+    style_profile: StyleProfile | None = None,
+    style_examples: list[str] | None = None,
+    research_synthesis: ResearchSynthesis | None = None,
+) -> WritingDraft:
 
-    style_profile_text=(
+    template = get_writing_template(request.output_type)
+
+    evidence_text = "\n".join(f"- {item.claim}" for item in report.evidence)
+
+    style_profile_text = (
         style_profile.model_dump_json(indent=2)
-        if style_profile is not None else "No Style profile available."
+        if style_profile is not None
+        else "No Style profile available."
     )
 
-    examples=style_examples or []
-    style_examples_text="\n\n--\n\n".join(examples)
+    examples = style_examples or []
+    style_examples_text = "\n\n--\n\n".join(examples)
 
     if research_synthesis is not None:
-        findings_text="\n".join(
-            (
-                f"- {finding.finding}"
-                f"(confidence: {finding.confidence})"
-            )
+        findings_text = "\n".join(
+            (f"- {finding.finding}(confidence: {finding.confidence})")
             for finding in research_synthesis.key_findings
         )
 
-        uncertainities_text="\n".join(
-            f"- {item}" for item in research_synthesis.uncertainties
-        )
-        gaps_text="\n".join(
-            f"- {item}" for item in research_synthesis.research_gaps
-        )
-        synthesis_contradictions_text="\n".join(
+        uncertainities_text = "\n".join(f"- {item}" for item in research_synthesis.uncertainties)
+        gaps_text = "\n".join(f"- {item}" for item in research_synthesis.research_gaps)
+        synthesis_contradictions_text = "\n".join(
             f"- {item}" for item in research_synthesis.contradictions
         )
     else:
-        findings_text="No research synthesis available."
-        uncertainities_text="No synthesis uncertainties available."
-        gaps_text="No research gaps identified."
-        synthesis_contradictions_text="No synthesized contradiction available."
+        findings_text = "No research synthesis available."
+        uncertainities_text = "No synthesis uncertainties available."
+        gaps_text = "No research gaps identified."
+        synthesis_contradictions_text = "No synthesized contradiction available."
 
-    prompt=f"""
+    prompt = f"""
 You are the writing agent for Shodak.
 
 {UNTRUSTED_CONTENT_INSTRUCTION}
@@ -117,7 +111,7 @@ Requirements:
 - Stay reasonably close to the target word count.
 - Return structured output only.
 """
-    result=invoke_structured_with_fallback(schema=GeneratedDraft,prompt=prompt)
+    result = invoke_structured_with_fallback(schema=GeneratedDraft, prompt=prompt)
     return WritingDraft(
         output_type=request.output_type,
         title=result.title,
@@ -125,11 +119,8 @@ Requirements:
             DraftSection(
                 heading=section.heading,
                 content=section.content,
-                citations=find_relevant_citations(
-                    section.content,
-                    report.evidence
-                )
+                citations=find_relevant_citations(section.content, report.evidence),
             )
             for section in result.sections
-        ]
+        ],
     )

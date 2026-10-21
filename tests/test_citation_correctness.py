@@ -6,45 +6,39 @@ from shodak.models.writing import OutputType
 
 
 def test_correct_citation():
-    citation=Citation(
+    citation = Citation(
         source_title="RAG Paper",
         source_url="https://example.com/rag",
     )
     evidence = [
         Evidence(
-            claim=(
-                "Retrieval improves access "
-                "to external knowledge."
-            ),
+            claim=("Retrieval improves access to external knowledge."),
             supporting_text="Supporting evidence.",
             citation=citation,
             confidence=0.9,
         )
     ]
-    draft=WritingDraft(
+    draft = WritingDraft(
         output_type=OutputType.blog,
         title="RAG",
         sections=[
             DraftSection(
                 heading="Introduction",
-                content=(
-                    "Retrieval systems can improve "
-                    "access to external knowledge."
-                ),
+                content=("Retrieval systems can improve access to external knowledge."),
                 citations=[citation],
             )
         ],
     )
-    result=evaluate_citation_correctness(draft=draft,evidence_items=evidence)
+    result = evaluate_citation_correctness(draft=draft, evidence_items=evidence)
 
-    assert result.correct_citations==1
-    assert result.total_citations==1
-    assert result.citation_correctness_score==1.0
-    assert result.incorrect_sections==[]
+    assert result.correct_citations == 1
+    assert result.total_citations == 1
+    assert result.citation_correctness_score == 1.0
+    assert result.incorrect_sections == []
 
 
 def test_incorrect_citation():
-    citation=Citation(
+    citation = Citation(
         source_title="Transformer Paper",
         source_url="https://example.com/transformer",
     )
@@ -63,16 +57,13 @@ def test_incorrect_citation():
         sections=[
             DraftSection(
                 heading="Introduction",
-                content=(
-                    "Retrieval improves access "
-                    "to external knowledge."
-                ),
+                content=("Retrieval improves access to external knowledge."),
                 citations=[citation],
             )
         ],
     )
-    result=evaluate_citation_correctness(draft=draft,evidence_items=evidence)
-    assert result.correct_citations==0
-    assert result.total_citations==1
-    assert result.citation_correctness_score==0.0
-    assert result.incorrect_sections==["Introduction"]
+    result = evaluate_citation_correctness(draft=draft, evidence_items=evidence)
+    assert result.correct_citations == 0
+    assert result.total_citations == 1
+    assert result.citation_correctness_score == 0.0
+    assert result.incorrect_sections == ["Introduction"]

@@ -2,18 +2,18 @@ from shodak.models.source import Source
 from shodak.research.doi import normalize_doi
 
 
-def _normalize_title(title:str)->str:
+def _normalize_title(title: str) -> str:
     return " ".join(title.lower().split())
 
 
-def deduplicate_sources(sources:list[Source])->list[Source]:
-    seen_dois:set[str]=set()
-    seen_titles:set[str]=set()
-    unique_sources:list[Source]=[]
+def deduplicate_sources(sources: list[Source]) -> list[Source]:
+    seen_dois: set[str] = set()
+    seen_titles: set[str] = set()
+    unique_sources: list[Source] = []
 
     for source in sources:
-        doi=normalize_doi(source.doi)
-        normalized_title=_normalize_title(source.title)
+        doi = normalize_doi(source.doi)
+        normalized_title = _normalize_title(source.title)
         if doi:
             if doi in seen_dois:
                 continue

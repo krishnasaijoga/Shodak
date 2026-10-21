@@ -5,32 +5,27 @@ from shodak.models.evidence import Evidence
 
 
 class GroundingResult(BaseModel):
-    supported_sections:int
-    total_sections:int
-    grounding_score:float=Field(ge=0.0,le=1.0)
-    unsupported_sections:list[str]
+    supported_sections: int
+    total_sections: int
+    grounding_score: float = Field(ge=0.0, le=1.0)
+    unsupported_sections: list[str]
 
 
-def evaluate_grounding(
-    draft:WritingDraft,
-    evidence_items:list[Evidence]
-)->GroundingResult:
-    supported_sections=0
-    unsupported_sections:list[str]=[]
+def evaluate_grounding(draft: WritingDraft, evidence_items: list[Evidence]) -> GroundingResult:
+    supported_sections = 0
+    unsupported_sections: list[str] = []
 
     for section in draft.sections:
         if section.citations:
-            supported_sections+=1
+            supported_sections += 1
         else:
             unsupported_sections.append(section.heading)
-    total_sections=len(draft.sections)
+    total_sections = len(draft.sections)
 
-    grounding_score=(
-        supported_sections/total_sections if total_sections else 0.0
-    )
+    grounding_score = supported_sections / total_sections if total_sections else 0.0
     return GroundingResult(
         supported_sections=supported_sections,
         total_sections=total_sections,
         grounding_score=grounding_score,
-        unsupported_sections=unsupported_sections
+        unsupported_sections=unsupported_sections,
     )

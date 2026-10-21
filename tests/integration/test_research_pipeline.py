@@ -7,7 +7,7 @@ from shodak.research.report import build_research_report
 
 
 def test_research_pipeline_end_to_end():
-    source=normalize_source(
+    source = normalize_source(
         Source(
             title="RAG Evaluation Paper",
             url="https://example.com/rag-paper",
@@ -25,16 +25,16 @@ def test_research_pipeline_end_to_end():
         )
     )
 
-    with patch("shodak.research.report.search_academic_sources",return_value=[source]):
-        request=ResearchRequest(topic="retrieval augmented generation",max_sources=5)
-        report=build_research_report(request)
-    assert report.request.topic=="retrieval augmented generation"
-    assert len(report.research_questions)>0
-    assert len(report.sources)==1
-    assert len(report.evidence)>0
+    with patch("shodak.research.report.search_academic_sources", return_value=[source]):
+        request = ResearchRequest(topic="retrieval augmented generation", max_sources=5)
+        report = build_research_report(request)
+    assert report.request.topic == "retrieval augmented generation"
+    assert len(report.research_questions) > 0
+    assert len(report.sources) == 1
+    assert len(report.evidence) > 0
     assert report.sources[0].metadata_complete is True
-    assert report.sources[0].title=="RAG Evaluation Paper"
-    first_evidence=report.evidence[0]
-    assert first_evidence.citation.source_title=="RAG Evaluation Paper"
+    assert report.sources[0].title == "RAG Evaluation Paper"
+    first_evidence = report.evidence[0]
+    assert first_evidence.citation.source_title == "RAG Evaluation Paper"
     assert first_evidence.citation.doi == "10.1234/example"
-    assert first_evidence.confidence>0
+    assert first_evidence.confidence > 0

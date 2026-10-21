@@ -11,7 +11,7 @@ def test_insufficient_when_too_few_sources():
         source_type=SourceType.academic,
         provider=SourceProvider.crossref,
     )
-    quality=evaluate_research_quality(sources=[source],evidence=[])
+    quality = evaluate_research_quality(sources=[source], evidence=[])
     assert quality.sufficient_evidence is False
 
 
@@ -50,7 +50,7 @@ def test_sufficient_when_sources_and_evidence_are_present():
             confidence=0.6,
         ),
     ]
-    quality=evaluate_research_quality(sources=sources,evidence=evidence,coverage_score=0.5)
+    quality = evaluate_research_quality(sources=sources, evidence=evidence, coverage_score=0.5)
     assert quality.sufficient_evidence is True
     assert quality.reason is None
 
@@ -91,19 +91,15 @@ evidence_2 = Evidence(
 
 
 def test_research_quality_fails_when_coverage_is_low():
-    quality=evaluate_research_quality(
-        sources=[source_1,source_2],
-        evidence=[evidence_1,evidence_2],
-        coverage_score=0.0
+    quality = evaluate_research_quality(
+        sources=[source_1, source_2], evidence=[evidence_1, evidence_2], coverage_score=0.0
     )
     assert quality.sufficient_evidence is False
-    assert quality.coverage_score==0.0
+    assert quality.coverage_score == 0.0
 
 
 def test_research_quality_passes_with_sufficient_coverage():
-    quality=evaluate_research_quality(
-            sources=[source_1,source_2],
-            evidence=[evidence_1,evidence_2],
-            coverage_score=0.5
-        )
+    quality = evaluate_research_quality(
+        sources=[source_1, source_2], evidence=[evidence_1, evidence_2], coverage_score=0.5
+    )
     assert quality.sufficient_evidence is True

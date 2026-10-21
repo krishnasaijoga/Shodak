@@ -6,15 +6,14 @@ from shodak.models.evidence import Evidence
 
 
 class ContradictionResult(BaseModel):
-    is_contradiction:bool
-    explanation:str
+    is_contradiction: bool
+    explanation: str
 
 
 def detect_contradiction_with_llm(
-    evidence_a:Evidence,
-    evidence_b:Evidence
-)->Contradiction | None:
-    prompt=f"""
+    evidence_a: Evidence, evidence_b: Evidence
+) -> Contradiction | None:
+    prompt = f"""
     You are comparing two research claims
 
     claim A:
@@ -30,25 +29,23 @@ def detect_contradiction_with_llm(
     - Distinguish contradiction from partial disagreement or different scope.
     - Return structured ouptut only.
     """
-    result=invoke_structured_with_fallback(schema=ContradictionResult,prompt=prompt)
+    result = invoke_structured_with_fallback(schema=ContradictionResult, prompt=prompt)
     if not result.is_contradiction:
         return None
     return Contradiction(
         topic="Semnatically conflicting evidence",
         evidence_a=evidence_a,
         evidence_b=evidence_b,
-        explanation=result.explanation
+        explanation=result.explanation,
     )
 
 
-def detect_contradictions_with_llm(
-    evidence_items:list[Evidence]
-)->list[Contradiction]:
-    contradictions:list[Contradiction]=[]
+def detect_contradictions_with_llm(evidence_items: list[Evidence]) -> list[Contradiction]:
+    contradictions: list[Contradiction] = []
 
     for index, first in enumerate(evidence_items):
-        for second in evidence_items[index+1:]:
-            contradiction=detect_contradiction_with_llm(first, second)
+        for second in evidence_items[index + 1 :]:
+            contradiction = detect_contradiction_with_llm(first, second)
             if contradiction is not None:
                 contradictions.append(contradiction)
     return contradictions

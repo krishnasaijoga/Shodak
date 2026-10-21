@@ -7,21 +7,20 @@ from shodak.models.source import Source
 
 
 class ExtractedEvidenceItem(BaseModel):
-    claim:str
-    supporting_text:str
-    confidence:float=Field(ge=0.0,le=1.0)
+    claim: str
+    supporting_text: str
+    confidence: float = Field(ge=0.0, le=1.0)
 
 
 class ExtractedEvidence(BaseModel):
-    items:list[ExtractedEvidenceItem]
+    items: list[ExtractedEvidenceItem]
 
 
-
-def extract_evidence_with_llm(source:Source)->list[Evidence]:
+def extract_evidence_with_llm(source: Source) -> list[Evidence]:
     if not source.abstract:
         return []
 
-    prompt=f"""
+    prompt = f"""
 You are extracting evidence from an academic source.
 
 Source title:
@@ -39,7 +38,7 @@ Requirements:
 - confidence must represent how clarly the abstract supports the claim.
 - Returns structured output only.
 """
-    result=invoke_structured_with_fallback(schema=ExtractedEvidence, prompt=prompt)
+    result = invoke_structured_with_fallback(schema=ExtractedEvidence, prompt=prompt)
     return [
         Evidence(
             claim=item.claim,
@@ -48,8 +47,8 @@ Requirements:
                 source_title=source.title,
                 source_url=source.url,
                 doi=source.doi,
-                publication_year=source.publication_year
-            )
+                publication_year=source.publication_year,
+            ),
         )
         for item in result.items
     ]

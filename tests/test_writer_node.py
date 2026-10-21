@@ -10,15 +10,11 @@ from shodak.writing.generator import WritingDraft
 
 
 def test_writer_node_adds_draft():
-    research_request=ResearchRequest(
-        topic="AI agents in healthcare"
-    )
+    research_request = ResearchRequest(topic="AI agents in healthcare")
 
-    writing_request=WritingRequest(
-        output_type=OutputType.blog
-    )
+    writing_request = WritingRequest(output_type=OutputType.blog)
 
-    report=ResearchReport(
+    report = ResearchReport(
         request=research_request,
         research_questions=[],
         sources=[],
@@ -29,36 +25,23 @@ def test_writer_node_adds_draft():
             source_count=0,
             evidence_count=0,
             coverage_score=0.0,
-            reason="Test Report"
-        )
+            reason="Test Report",
+        ),
     )
-    fake_draft=WritingDraft(
-        output_type=OutputType.blog,
-        title="AI agents in heathcare",
-        sections=[]
+    fake_draft = WritingDraft(
+        output_type=OutputType.blog, title="AI agents in heathcare", sections=[]
     )
-    state:ShodakState={
-        "research_report":report,
-        "writing_request":writing_request
-    }
-    with patch(
-        "shodak.graph.nodes.generate_draft",
-        return_value=fake_draft
-    ):
-        result=writer_node(state)
+    state: ShodakState = {"research_report": report, "writing_request": writing_request}
+    with patch("shodak.graph.nodes.generate_draft", return_value=fake_draft):
+        result = writer_node(state)
     assert "writing_draft" in result
-    assert result["writing_draft"].title=="AI agents in heathcare"
-
+    assert result["writing_draft"].title == "AI agents in heathcare"
 
 
 def test_writer_node_passes_style_context():
-    research_request=ResearchRequest(
-        topic="AI agents in healthcare"
-    )
-    writing_request=WritingRequest(
-        output_type=OutputType.blog
-    )
-    report=ResearchReport(
+    research_request = ResearchRequest(topic="AI agents in healthcare")
+    writing_request = WritingRequest(output_type=OutputType.blog)
+    report = ResearchReport(
         request=research_request,
         research_questions=[],
         sources=[],
@@ -69,31 +52,26 @@ def test_writer_node_passes_style_context():
             source_count=0,
             evidence_count=0,
             coverage_score=0.0,
-            reason="Test report."
-        )
+            reason="Test report.",
+        ),
     )
-    state:ShodakState={
-        "research_report":report,
-        "writing_request":writing_request,
-        "style_profile":None,
-        "style_examples":["Example passage written in my style."]
+    state: ShodakState = {
+        "research_report": report,
+        "writing_request": writing_request,
+        "style_profile": None,
+        "style_examples": ["Example passage written in my style."],
     }
-    fake_draft=WritingDraft(
-        output_type=OutputType.blog,
-        title="AI agents in healthcare",
-        sections=[]
+    fake_draft = WritingDraft(
+        output_type=OutputType.blog, title="AI agents in healthcare", sections=[]
     )
-    with patch(
-        "shodak.graph.nodes.generate_draft",
-        return_value=fake_draft
-    ) as mock_generate:
-        result=writer_node(state)
-    assert result["writing_draft"]==fake_draft
+    with patch("shodak.graph.nodes.generate_draft", return_value=fake_draft) as mock_generate:
+        result = writer_node(state)
+    assert result["writing_draft"] == fake_draft
 
     mock_generate.assert_called_once_with(
         report=report,
         request=writing_request,
         style_profile=None,
         style_examples=["Example passage written in my style."],
-        research_synthesis=None
+        research_synthesis=None,
     )

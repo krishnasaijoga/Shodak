@@ -7,14 +7,12 @@ from shodak.models.source import Source, SourceProvider, SourceType
 from shodak.research.normalizer import normalize_source
 from shodak.research.report import build_research_report
 
-BENCHMARK_FILE=(
-    Path(__file__).resolve().parents[2]/"evaluation"/"research_benchmarks.json"
-)
+BENCHMARK_FILE = Path(__file__).resolve().parents[2] / "evaluation" / "research_benchmarks.json"
 
 
 def test_research_quality_benchmarks():
-    benchmarks=json.loads(BENCHMARK_FILE.read_text())
-    mock_sources=[
+    benchmarks = json.loads(BENCHMARK_FILE.read_text())
+    mock_sources = [
         normalize_source(
             Source(
                 title="Paper One",
@@ -23,9 +21,11 @@ def test_research_quality_benchmarks():
                 provider=SourceProvider.semantic_scholar,
                 authors=["Krishna Joga"],
                 publication_year=2025,
-                abstract=("Retrieval augmented generation improves access to external knowledge. "
-                    "Retrieval quality strongly affects answer quality."),
-                citation_count=100
+                abstract=(
+                    "Retrieval augmented generation improves access to external knowledge. "
+                    "Retrieval quality strongly affects answer quality."
+                ),
+                citation_count=100,
             )
         ),
         normalize_source(
@@ -43,16 +43,11 @@ def test_research_quality_benchmarks():
                 doi="10.1234/example",
                 citation_count=50,
             )
-        )
+        ),
     ]
     with (
-        patch(
-            "shodak.research.report.settings.cache_enabled",False
-        ),
-        patch(
-            "shodak.research.report.search_academic_sources",
-            return_value=mock_sources
-        ),
+        patch("shodak.research.report.settings.cache_enabled", False),
+        patch("shodak.research.report.search_academic_sources", return_value=mock_sources),
         patch(
             "shodak.research.report.build_research_questions_with_fallback",
             return_value=[
@@ -60,17 +55,12 @@ def test_research_quality_benchmarks():
                 "How does retrieval improve access to external knowledge?",
                 "What are the benefits of retrieval augmented generation?",
                 "What are the limitations of retrieval augmented generation?",
-                "How does retrieval quality affect generated answers?"
-            ]
-        )
+                "How does retrieval quality affect generated answers?",
+            ],
+        ),
     ):
         for benchmark in benchmarks:
-            report=build_research_report(
-                ResearchRequest(
-                    topic=benchmark["topic"],
-                    max_sources=5
-                )
-            )
-            assert len(report.sources)>=benchmark["expected_min_sources"]
-            assert len(report.evidence)>=benchmark["expected_min_evidence"]
-            assert (report.quality.coverage_score>=benchmark["expected_min_coverage"])
+            report = build_research_report(ResearchRequest(topic=benchmark["topic"], max_sources=5))
+            assert len(report.sources) >= benchmark["expected_min_sources"]
+            assert len(report.evidence) >= benchmark["expected_min_evidence"]
+            assert report.quality.coverage_score >= benchmark["expected_min_coverage"]

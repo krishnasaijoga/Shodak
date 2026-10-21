@@ -8,34 +8,25 @@ from shodak.writing.citation_grounding import find_relevant_citations
 
 
 class RevisedSection(BaseModel):
-    heading:str
-    content:str
+    heading: str
+    content: str
 
 
 class RevisedDraft(BaseModel):
-    title:str
-    sections:list[RevisedSection]=Field(min_length=1)
+    title: str
+    sections: list[RevisedSection] = Field(min_length=1)
 
 
 def revise_draft_with_llm(
-        draft:WritingDraft,
-        report:ResearchReport,
-        scorecard:EvaluationScorecard
-)->WritingDraft:
-    evidence_text="\n".join(
-        f"- {evidence.claim}"
-        for evidence in report.evidence
+    draft: WritingDraft, report: ResearchReport, scorecard: EvaluationScorecard
+) -> WritingDraft:
+    evidence_text = "\n".join(f"- {evidence.claim}" for evidence in report.evidence)
+
+    current_draft = "\n\n".join(
+        (f"{section.heading}\n{section.content}") for section in draft.sections
     )
 
-    current_draft="\n\n".join(
-        (
-            f"{section.heading}\n"
-            f"{section.content}"
-        )
-        for section in draft.sections
-    )
-
-    prompt=f"""
+    prompt = f"""
 You are the revision agent for Shodak.
 
 Revise the draft using the evaluation results and research evidence.
@@ -65,10 +56,7 @@ Requirements:
 - Return structured output only.
 """
 
-    result=invoke_structured_with_fallback(
-        schema=RevisedDraft,
-        prompt=prompt
-    )
+    result = invoke_structured_with_fallback(schema=RevisedDraft, prompt=prompt)
     return WritingDraft(
         output_type=draft.output_type,
         title=result.title,
@@ -76,11 +64,8 @@ Requirements:
             DraftSection(
                 heading=section.heading,
                 content=section.content,
-                citations=find_relevant_citations(
-                    section.content,
-                    report.evidence
-                )
+                citations=find_relevant_citations(section.content, report.evidence),
             )
             for section in result.sections
-        ]
+        ],
     )

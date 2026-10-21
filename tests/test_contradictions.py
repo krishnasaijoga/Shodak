@@ -4,7 +4,7 @@ from shodak.research.contradictions import detect_contradictions
 
 
 def test_potential_contradiction_is_detected():
-    positive=Evidence(
+    positive = Evidence(
         claim="Retrieval improves answer quality in language models",
         supporting_text="Evidence supporting improvement.",
         citation=Citation(
@@ -22,8 +22,8 @@ def test_potential_contradiction_is_detected():
         ),
         confidence=0.7,
     )
-    result=detect_contradictions([positive,negative])
-    assert len(result)==1
+    result = detect_contradictions([positive, negative])
+    assert len(result) == 1
 
 
 def test_unrelated_claims_are_not_contradictions():
@@ -46,5 +46,5 @@ def test_unrelated_claims_are_not_contradictions():
         ),
         confidence=0.6,
     )
-    result=detect_contradictions([first,second])
-    assert result==[]
+    result = detect_contradictions([first, second])
+    assert result == []

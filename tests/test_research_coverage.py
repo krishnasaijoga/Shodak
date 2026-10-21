@@ -3,35 +3,30 @@ from shodak.models.evidence import Evidence
 from shodak.research.coverage import calculate_research_coverage, question_is_covered
 
 
-def make_evidence(claim:str)->Evidence:
+def make_evidence(claim: str) -> Evidence:
     return Evidence(
         claim=claim,
         supporting_text=claim,
         citation=Citation(
-        source_title="Example Paper",
-        source_url="https://example.com/paper",
+            source_title="Example Paper",
+            source_url="https://example.com/paper",
         ),
-        confidence=0.7
+        confidence=0.7,
     )
 
 
 def test_question_is_covered():
-    evidence=[
+    evidence = [
         make_evidence("Retrieval augmented generation improves access to external knowledge")
     ]
-    result=question_is_covered(
-        "how does retrieval augmented generation use external knowledge?",
-        evidence
+    result = question_is_covered(
+        "how does retrieval augmented generation use external knowledge?", evidence
     )
     assert result is True
 
 
 def test_unrelated_question_is_not_covered():
-    evidence = [
-        make_evidence(
-            "Retrieval augmented generation improves external knowledge access"
-        )
-    ]
+    evidence = [make_evidence("Retrieval augmented generation improves external knowledge access")]
 
     result = question_is_covered(
         "What are the benefits of convolutional neural networks?",
@@ -41,37 +36,32 @@ def test_unrelated_question_is_not_covered():
 
 
 def test_coverage_score():
-    questions=[
+    questions = [
         "How does retrieval augmented generation use external knowledge?",
-        "What are the risks of autonomous vehicles?"
+        "What are the risks of autonomous vehicles?",
     ]
-    evidence=[
-        make_evidence(
-            "Retrieval augmented generation improves access to external knowledge"
-        )
+    evidence = [
+        make_evidence("Retrieval augmented generation improves access to external knowledge")
     ]
-    score=calculate_research_coverage(questions,evidence)
-    assert score==0.5
-
+    score = calculate_research_coverage(questions, evidence)
+    assert score == 0.5
 
 
 def test_generic_machine_learning_words_do_not_count_as_coverage():
-    question="What regulatory frameworks govern machine learning in high-risk domains?"
+    question = "What regulatory frameworks govern machine learning in high-risk domains?"
 
-    evidence=[
-        make_evidence(
-            "Classic machine learning algorithms include support vector classifiers."
-        )
+    evidence = [
+        make_evidence("Classic machine learning algorithms include support vector classifiers.")
     ]
 
-    assert question_is_covered(question,evidence) is False
+    assert question_is_covered(question, evidence) is False
 
 
 def test_relevant_evidence_covers_question():
-    question="What classic algorithms are used for classification?"
-    evidence=[
+    question = "What classic algorithms are used for classification?"
+    evidence = [
         make_evidence(
             "Support vector classifiers and random forest classifiers are classic algorithms."
         )
     ]
-    assert question_is_covered(question,evidence) is True
+    assert question_is_covered(question, evidence) is True

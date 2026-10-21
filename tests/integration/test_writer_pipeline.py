@@ -11,7 +11,7 @@ from shodak.writing.renderer import render_markdown
 
 
 def test_writer_pipeline_end_to_end():
-    evidence_a=Evidence(
+    evidence_a = Evidence(
         claim="Retrieval improves access to external knowledge.",
         supporting_text="Supporting evidence A.",
         citation=Citation(
@@ -22,7 +22,7 @@ def test_writer_pipeline_end_to_end():
         ),
         confidence=0.8,
     )
-    evidence_b=Evidence(
+    evidence_b = Evidence(
         claim="Retrieval does not always improve answer quality.",
         supporting_text="Supporting evidence B.",
         citation=Citation(
@@ -33,36 +33,31 @@ def test_writer_pipeline_end_to_end():
         ),
         confidence=0.8,
     )
-    report=ResearchReport(
-        request=ResearchRequest(
-            topic="retrieval augmented generation"
-        ),
+    report = ResearchReport(
+        request=ResearchRequest(topic="retrieval augmented generation"),
         research_questions=[
             "What is retrieval augmented generation?",
             "What are its benefits and limitations?",
         ],
         sources=[],
-        evidence=[evidence_a,evidence_b],
+        evidence=[evidence_a, evidence_b],
         contradictions=[
             Contradiction(
                 topic="Retrieval effectiveness",
                 evidence_a=evidence_a,
                 evidence_b=evidence_b,
-                explanation="The sources report different outcomes."
+                explanation="The sources report different outcomes.",
             )
         ],
         quality=ResearchQuality(
-            sufficient_evidence=True,
-            source_count=2,
-            evidence_count=2,
-            coverage_score=0.5
-        )
+            sufficient_evidence=True, source_count=2, evidence_count=2, coverage_score=0.5
+        ),
     )
-    writing_request=WritingRequest(
+    writing_request = WritingRequest(
         output_type=OutputType.blog,
         title="Understanding Retrieval Augmented Generation",
         include_citation=True,
-        include_references=True
+        include_references=True,
     )
 
     with patch(
@@ -97,14 +92,14 @@ def test_writer_pipeline_end_to_end():
                     heading="Conclusion",
                     content="The evidence suggests benefits with limitations.",
                 ),
-            ]
-        )
+            ],
+        ),
     ):
-        draft=generate_draft(report,writing_request)
+        draft = generate_draft(report, writing_request)
 
-    rendered=render_markdown(draft,include_references=writing_request.include_references)
-    assert draft.title.lower() =="Understanding Retrieval Augmented Generation".lower()
-    headings=[section.heading for section in draft.sections]
+    rendered = render_markdown(draft, include_references=writing_request.include_references)
+    assert draft.title.lower() == "Understanding Retrieval Augmented Generation".lower()
+    headings = [section.heading for section in draft.sections]
     assert "Introduction" in headings
     assert "Conflicting Evidence" in headings
     assert "## References" in rendered

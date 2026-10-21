@@ -3,7 +3,7 @@ from shodak.research.evidence import extract_evidence_from_source
 
 
 def test_extract_evidence_from_abstract():
-    source=Source(
+    source = Source(
         title="Example Paper",
         url="https://example.com/paper",
         source_type=SourceType.academic,
@@ -14,21 +14,20 @@ def test_extract_evidence_from_abstract():
             "Retrieval augmented generation can improve access to external knowledge. "
             "Several studies report reductions in unsupported model responses when "
             "retrieval quality is high."
-        )
+        ),
     )
-    evidence=extract_evidence_from_source(source)
-    assert len(evidence)>0
-    assert evidence[0].citation.source_title=="Example Paper"
+    evidence = extract_evidence_from_source(source)
+    assert len(evidence) > 0
+    assert evidence[0].citation.source_title == "Example Paper"
     assert str(evidence[0].citation.source_url) == "https://example.com/paper"
 
 
-
 def test_source_without_abstract_returns_no_evidence():
-    source=Source(
+    source = Source(
         title="No Abstract",
         url="https://example.com/no-abstract",
         source_type=SourceType.academic,
-        provider=SourceProvider.crossref
+        provider=SourceProvider.crossref,
     )
-    evidence=extract_evidence_from_source(source)
+    evidence = extract_evidence_from_source(source)
     assert evidence == []
