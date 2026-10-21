@@ -54,7 +54,7 @@ def test_research_quality_benchmarks():
             return_value=mock_sources
         ),
         patch(
-            "shodak.research.planner.build_research_questions_with_fallback",
+            "shodak.research.report.build_research_questions_with_fallback",
             return_value=[
                 "What is retrieval augmented generation?",
                 "How does retrieval improve access to external knowledge?",

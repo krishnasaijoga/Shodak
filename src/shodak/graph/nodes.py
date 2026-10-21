@@ -67,6 +67,12 @@ def synthesis_node(state:ShodakState)->ShodakState:
 def evaluator_node(
     state:ShodakState
 )->ShodakState:
+    report=state.get("research_report")
+    if report is not None and not report.quality.sufficient_evidence:
+        return {
+            "evaluation_scorecard":None,
+            "evaluation_error":None
+        }
     try:
         with log_operation("evaluator_node"):
             draft=state["writing_draft"]

@@ -13,10 +13,7 @@ def route_after_research(state:ShodakState)->str:
 def route_after_evaluation(
         state:ShodakState
 )->str:
-    scorecard=state["evaluation_scorecard"]
     revision_count=state.get("revision_count",0)
-    if scorecard is None:
-        return "render"
-    if should_revise(scorecard) and revision_count<=MAX_REVISIONS:
+    if should_revise(state)=="revise" and revision_count<=MAX_REVISIONS:
         return "revise"
     return "render"

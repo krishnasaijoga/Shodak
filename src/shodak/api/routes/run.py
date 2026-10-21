@@ -78,15 +78,18 @@ def run_shodak(request:RunApiRequest)->RunApiResponse:
         evidence=evidence_response
     )
 
-    evaluation_response=EvaluationApiResponse(
-        grounding_score=scorecard.grounding_score,
-        citation_correctness_score=scorecard.citation_correctness_score,
-        hallucination_safety_score=scorecard.hallucination_safety_score,
-        style_similarity_score=scorecard.style_similarity_score,
-        format_compliance_score=scorecard.format_compliance_score,
-        research_quality_score=scorecard.research_quality_score,
-        overall_quality_score=scorecard.overall_quality_score
-    )
+    evaluation_response=None
+
+    if scorecard is not None:
+        evaluation_response=EvaluationApiResponse(
+            grounding_score=scorecard.grounding_score,
+            citation_correctness_score=scorecard.citation_correctness_score,
+            hallucination_safety_score=scorecard.hallucination_safety_score,
+            style_similarity_score=scorecard.style_similarity_score,
+            format_compliance_score=scorecard.format_compliance_score,
+            research_quality_score=scorecard.research_quality_score,
+            overall_quality_score=scorecard.overall_quality_score
+        )
 
     evaluation_data=(scorecard.model_dump(mode="json") if scorecard is not None else None)
 

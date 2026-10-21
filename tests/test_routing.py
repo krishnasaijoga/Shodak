@@ -1,3 +1,7 @@
+from types import SimpleNamespace
+
+from shodak.evaluation.policy import should_revise
+from shodak.graph.nodes import evaluator_node
 from shodak.graph.routing import route_after_evaluation, route_after_research
 from shodak.graph.state import ShodakState
 from shodak.research.quality import ResearchQuality
@@ -33,3 +37,36 @@ def test_missing_scorecard_routes_to_render():
     }
     result=route_after_evaluation(state)
     assert result=="render"
+
+
+def test_insufficent_research_skips_revision():
+    research_report = SimpleNamespace(
+        quality=SimpleNamespace(
+            sufficient_evidence=False
+        )
+    )
+
+    state = {
+        "research_report": research_report,
+        "revision_count": 0,
+        "evaluation_scorecard": SimpleNamespace(
+            overall_quality_score=0.1
+        ),
+    }
+
+    result = should_revise(state)
+
+    assert result == "render"
+
+
+def test_evaluator_skips_insufficent_research():
+    state={
+        "research_report":SimpleNamespace(
+            quality=SimpleNamespace(sufficient_evidence=False)
+        )
+    }
+
+    result=evaluator_node(state)
+
+    assert result["evaluation_scorecard"] is None
+    assert result["evaluation_error"] is None

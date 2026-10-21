@@ -59,7 +59,7 @@ def test_workflow_runs_end_to_end():
         patch(
             "shodak.graph.nodes.evaluate_output",
             side_effect=RuntimeError("Evaluator Failed")
-        )
+        ) as mock_evaluate
     ):
         workflow=build_workflow()
         result=workflow.invoke(
@@ -76,4 +76,5 @@ def test_workflow_runs_end_to_end():
     
     assert result["rendered_output"]
     assert result["evaluation_scorecard"] is None
-    assert result["evaluation_error"]=="RuntimeError"
+    assert result["evaluation_error"] is None
+    mock_evaluate.assert_not_called()

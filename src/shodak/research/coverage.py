@@ -1,6 +1,5 @@
 from shodak.models.evidence import Evidence
 
-
 GENERIC_RESEARCH_WORDS={
     "machine",
     "learning",
