@@ -147,7 +147,7 @@ def _run_workflow(args: argparse.Namespace) -> None:
         "topic": research_request.topic,
         "output_type": writing_request.output_type.value,
         "content": rendered_output,
-        "evaluation": scorecard.model_dump(),
+        "evaluation": evaluation_data,
     }
 
     print("\n")
