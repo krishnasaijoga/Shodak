@@ -153,14 +153,17 @@ def _run_workflow(args: argparse.Namespace) -> None:
     print("\n")
     print(rendered_output)
 
-    print("\n---------Quality Scorecard----------")
-    print(f"Grounding: {scorecard.grounding_score:.2f}")
-    print(f"Citation correctness: {scorecard.citation_correctness_score:.2f}")
-    print(f"Hallucination safety: {scorecard.hallucination_safety_score:.2f}")
-    print(f"Style similarity: {scorecard.style_similarity_score:.2f}")
-    print(f"Format compliance: {scorecard.format_compliance_score:.2f}")
-    print(f"Research Quality: {scorecard.research_quality_score:.2f}")
-    print(f"Overall quality: {scorecard.overall_quality_score:.2f}")
+    if scorecard is not None:
+        print("\n---------Quality Scorecard----------")
+        print(f"Grounding: {scorecard.grounding_score:.2f}")
+        print(f"Citation correctness: {scorecard.citation_correctness_score:.2f}")
+        print(f"Hallucination safety: {scorecard.hallucination_safety_score:.2f}")
+        print(f"Style similarity: {scorecard.style_similarity_score:.2f}")
+        print(f"Format compliance: {scorecard.format_compliance_score:.2f}")
+        print(f"Research Quality: {scorecard.research_quality_score:.2f}")
+        print(f"Overall quality: {scorecard.overall_quality_score:.2f}")
+    else:
+        print("\nQuality evlauation skipped: insufficient research evidence.")
 
     if args.output:
         output_path = validate_output_path(args.output)

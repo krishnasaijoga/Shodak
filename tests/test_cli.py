@@ -127,3 +127,41 @@ def test_cli_check_failure(monkeypatch):
         main()
 
     assert exc.value.code == 1
+
+def test_cli_run_without_llm(capsys):
+    fake_result = {
+        "rendered_output": (
+            "# Retrieval Augmented Generation\n\n"
+            "Test output."
+        ),
+        "evaluation_scorecard": None,
+    }
+
+    with (
+        patch(
+            "sys.argv",
+            [
+                "shodak",
+                "run",
+                "retrieval augmented generation",
+                "--output-type",
+                "blog",
+            ],
+        ),
+        patch(
+            "shodak.cli.build_workflow"
+        ) as mock_build_workflow,
+    ):
+        mock_workflow = (
+            mock_build_workflow.return_value
+        )
+
+        mock_workflow.invoke.return_value = (
+            fake_result
+        )
+
+        main()
+
+    captured = capsys.readouterr()
+
+    assert "Test output" in captured.out
