@@ -34,5 +34,8 @@ logs/
 # Miscellaneous
 learning.txt
 
-# run_hostory
+# run_history
 data/run_history.jsonl
+
+# outputs from runs
+test_output.md

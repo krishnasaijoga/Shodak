@@ -65,3 +65,27 @@
 - [x] CLI tests
 - [x] Security tests
 - [x] Reliability tests
+
+# Production Readiness
+
+## Validation
+
+- [x] Full pytest suite passes
+- [x] Ruff checks pass
+- [x] Startup checks pass
+- [x] API health endpoint verified
+- [x] Research fallback verified
+- [x] Semantic Scholar rate-limit recovery verified
+- [x] Crossref fallback verified
+- [x] OpenAlex enrichment verified
+- [x] Evidence quality gating verified
+- [x] Insufficient-evidence fallback verified
+- [x] Evaluator failure recovery verified
+- [x] Revision bypass for insufficient evidence verified
+- [x] CLI run verified
+- [x] Export verified
+- [x] Persistence verified
+- [x] Secrets/generated runtime files ignored
+
+## Status
+Production Hardening: Complete
