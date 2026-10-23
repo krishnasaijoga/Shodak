@@ -1,10 +1,8 @@
-from unittest.mock import patch
 
 from shodak.models.citation import Citation
 from shodak.models.evidence import Evidence
 from shodak.research.contradictions import (
     detect_contradictions,
-    detect_contradictions_with_fallback,
 )
 
 
@@ -89,18 +87,12 @@ def test_complimentary_claims_are_not_marked_as_contradiction():
         )
     ]
 
-    with patch(
-        "shodak.research.contradictions.detect_contradictions"
-    ) as mock_detector:
-        mock_detector.return_value.is_contradiction=False
-        mock_detector.return_value.explanation="The claims describe complementary aspects of the same RAG architecture."
-
-        contradictions=detect_contradictions_with_fallback(evidence)
+    contradictions=detect_contradictions(evidence)
 
     assert contradictions==[]
 
 
-def test_conflicting_calims_are_marked_as_contradiction():
+def test_conflicting_claims_are_marked_as_contradiction():
     evidence=[
         Evidence(
             claim="Method A improves model accuracy.",
@@ -114,10 +106,8 @@ def test_conflicting_calims_are_marked_as_contradiction():
             confidence=0.8
         ),
         Evidence(
-            claim="Method A reduces model accuracy.",
-            supporting_text=(
-                "Method A reduces model accuracy."
-            ),
+            claim="Method A does not improve model accuracy.",
+            supporting_text="Method A does not improve model accuracy.",
             citation=Citation(
                 source_title="Paper Two",
                 source_url="https://example.com/2"
@@ -126,12 +116,6 @@ def test_conflicting_calims_are_marked_as_contradiction():
         )
     ]
 
-    with patch(
-        "shodak.research.contradictions.detect_contradictions"
-    ) as mock_detector:
-        mock_detector.return_value.is_contradiction=True
-        mock_detector.return_value.explanation="One source reports improved accuracy while the other reports reduced accuracy."
-
-        contradictions=detect_contradictions_with_fallback(evidence)
+    contradictions=detect_contradictions(evidence)
 
     assert len(contradictions)==1

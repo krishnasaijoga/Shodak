@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -28,19 +29,31 @@ def test_health_is_degraded_without_provider():
 
 
 def test_health_status_is_healthy_when_provider_exisits():
-    with patch(
-        "shodak.api.health.get_provider_status",
-        return_value=[{"provider": "groq", "configured": True}],
+    with (
+        patch(
+            "shodak.api.health.run_startup_checks",
+            return_value=SimpleNamespace(healthy=True)
+        ),
+        patch(
+            "shodak.api.health.get_provider_status",
+            return_value=[{"provider": "groq", "configured": True}],
+        )
     ):
         assert get_health_status() == "healthy"
 
 
 def test_health_status_is_degraded_without_providers():
-    with patch(
-        "shodak.api.health.get_provider_status",
-        return_value=[
-            {"provider": "groq", "configured": False},
-            {"provider": "openai", "configured": False},
-        ],
+    with (
+        patch(
+            "shodak.api.health.run_startup_checks",
+            return_value=SimpleNamespace(healthy=False)
+        ),
+        patch(
+            "shodak.api.health.get_provider_status",
+            return_value=[
+                {"provider": "groq", "configured": False},
+                {"provider": "openai", "configured": False},
+            ],
+        )
     ):
         assert get_health_status() == "degraded"
