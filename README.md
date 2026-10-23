@@ -153,7 +153,7 @@ Docker is optional for local Python development but required for containerized d
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/krishnasaijoga/Shodak.git
 cd Shodak
 ```
 
