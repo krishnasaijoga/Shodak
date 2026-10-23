@@ -3,6 +3,7 @@
 
 # Environment variables
 .env
+.env.production
 
 # Python
 __pycache__/
@@ -16,6 +17,7 @@ build/
 # testing
 .pytest_cache/
 .coverage
+.ruff_cache/
 htmlcov/
 
 # IDE
@@ -36,6 +38,8 @@ learning.txt
 
 # run_history
 data/run_history.jsonl
+history/
+outputs/
 
 # outputs from runs
 test_output.md
