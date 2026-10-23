@@ -423,5 +423,3 @@ This separation makes the system easier to test, extend, evaluate, and debug whi
 ## Development Status
 
 Shodak has completed its core research, writing, orchestration, evaluation, API, CLI, reliability, Docker, and CI foundations.
-
-Current work focuses on deployment readiness, documentation, portfolio presentation, and final production validation.
